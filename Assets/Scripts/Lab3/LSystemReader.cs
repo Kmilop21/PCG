@@ -5,12 +5,12 @@ using UnityEngine;
 public class LSystemReader : MonoBehaviour
 {
     public LSystem LSystem;
-    public string Grammar;
+    public string axiom;
     public int Iteration = 1;
     // Start is called before the first frame update
     public virtual void Start()
     {
-        string currentGrammar = Grammar;
+        string currentGrammar = axiom;
 
         for(int i = 0; i < Iteration; i++)
         {

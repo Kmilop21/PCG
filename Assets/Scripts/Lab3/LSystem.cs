@@ -12,20 +12,20 @@ public class LSystem : ScriptableObject
 {
     [Serializable] public struct Grammar
     {
-        [field: SerializeField] public char Axiom { private set; get; }
-        [field: SerializeField] public string Rule { private set; get; }
+        [field: SerializeField] public char predecessor { private set; get; }
+        [field: SerializeField] public string successor { private set; get; }
         [field: SerializeField] public UnityEvent Meaning { private set; get; }
-        public Grammar(char axiom, string rule)
+        public Grammar(char predecessor, string successor)
         {
-            Axiom = axiom;
-            Rule = rule;
+            this.predecessor = predecessor;
+            this.successor = successor;
             Meaning = new UnityEvent();
         }
     }
 
     [SerializeField] protected List<Grammar> grammars = new List<Grammar>();
 
-    private string Generate(char axiom) =>  grammars.First((g) => g.Axiom == axiom).Rule;
+    private string Generate(char predecessor) =>  grammars.First((g) => g.predecessor == predecessor).successor;
     public string Generate(string grammar)
     {
         string newGrammar = string.Empty;
@@ -37,7 +37,7 @@ public class LSystem : ScriptableObject
     public void Interprete(string grammar)
     {
         foreach (char c in grammar)
-            grammars.First((g) => g.Axiom == c).Meaning.Invoke();
+            grammars.First((g) => g.predecessor == c).Meaning.Invoke();
     }
 
 #if UNITY_EDITOR
