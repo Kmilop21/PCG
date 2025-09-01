@@ -11,7 +11,7 @@ public class LSystem : ScriptableObject
 {
     [SerializeField] private List<char> alphabet = new List<char>();
     [SerializeField] private List<string> productionRules = new List<string>();
-    [SerializeField] private List<UnityEvent> events = new List<UnityEvent>();
+    [SerializeField] private List<UnityEvent> meanings = new List<UnityEvent>();
 
     private string Generate(char axiom)
     {
@@ -28,13 +28,19 @@ public class LSystem : ScriptableObject
 
     public void Interprete(string grammar)
     {
-        for (int i = 0; i < grammar.Length; i++)
-            events[i].Invoke();
+        foreach (char c in grammar)
+            meanings[alphabet.IndexOf(c)].Invoke();
     }
 
-    public UnityEvent GetEvent(int index) => events[index];
+    protected void Add(char axiom, string rule, UnityEvent meaning)
+    {
+        alphabet.Add(axiom);
+        productionRules.Add(rule);
+        meanings.Add(meaning ?? new UnityEvent());
+    }
+    //public UnityEvent GetMeaning(int index) => meanings[index];
 
-    public UnityEvent GetEvent(char axiom) => events[alphabet.IndexOf(axiom)];
+    //public UnityEvent GetMeaning(char axiom) => meanings[alphabet.IndexOf(axiom)];
 
 #if UNITY_EDITOR
     public class MyEditor : UnityEditor.Editor

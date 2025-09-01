@@ -6,18 +6,18 @@ public class LSystemReader : MonoBehaviour
 {
     public LSystem LSystem;
     public string Grammar;
-    public int N = 1;
+    public int Iteration = 1;
     // Start is called before the first frame update
     public virtual void Start()
     {
         string currentGrammar = Grammar;
 
-        for(int i = 0; i < N; i++)
+        for(int i = 0; i < Iteration; i++)
         {
             Debug.Log(currentGrammar);
             currentGrammar = LSystem.Generate(currentGrammar);
         }
 
-        Debug.Log(currentGrammar);
+        LSystem.Interprete(currentGrammar);
     }
 }
