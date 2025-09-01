@@ -2,22 +2,30 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
 
-[CreateAssetMenu(fileName = "L-System")]
+[CreateAssetMenu(fileName = "L-System Empty", menuName = "L-Systems/Empty")]
 public class LSystem : ScriptableObject
 {
-    [SerializeField] private List<char> alphabet = new List<char>();
-    [SerializeField] private List<string> productionRules = new List<string>();
-    [SerializeField] private List<UnityEvent> meanings = new List<UnityEvent>();
-
-    private string Generate(char axiom)
+    [Serializable] public struct Grammar
     {
-        return productionRules[alphabet.IndexOf(axiom)];
+        [field: SerializeField] public char Axiom { private set; get; }
+        [field: SerializeField] public string Rule { private set; get; }
+        [field: SerializeField] public UnityEvent Meaning { private set; get; }
+        public Grammar(char axiom, string rule)
+        {
+            Axiom = axiom;
+            Rule = rule;
+            Meaning = new UnityEvent();
+        }
     }
 
+    [SerializeField] protected List<Grammar> grammars = new List<Grammar>();
+
+    private string Generate(char axiom) =>  grammars.First((g) => g.Axiom == axiom).Rule;
     public string Generate(string grammar)
     {
         string newGrammar = string.Empty;
@@ -29,14 +37,7 @@ public class LSystem : ScriptableObject
     public void Interprete(string grammar)
     {
         foreach (char c in grammar)
-            meanings[alphabet.IndexOf(c)].Invoke();
-    }
-
-    protected void Add(char axiom, string rule, UnityEvent meaning)
-    {
-        alphabet.Add(axiom);
-        productionRules.Add(rule);
-        meanings.Add(meaning ?? new UnityEvent());
+            grammars.First((g) => g.Axiom == c).Meaning.Invoke();
     }
     //public UnityEvent GetMeaning(int index) => meanings[index];
 

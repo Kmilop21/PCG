@@ -17,7 +17,7 @@ public class LSystemReader : MonoBehaviour
             Debug.Log(currentGrammar);
             currentGrammar = LSystem.Generate(currentGrammar);
         }
-
+        Debug.Log(currentGrammar);
         LSystem.Interprete(currentGrammar);
     }
 }
