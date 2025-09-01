@@ -12,9 +12,10 @@ public class DungeonMakerLS : LSystem
     private int index;
     private (Vector2 position, Vector2 dir) bracketInfo;
     private (Vector2 position, Vector2 dir) movement;
-    private List<GameObject> instances = new List<GameObject>();
+    [System.NonSerialized] private List<Vector3> positions;
     public DungeonMakerLS()
     {
+        positions = new List<Vector3>();
         prefabs = new GameObject[0];
         index = 0;
         bracketInfo = new(Vector2.zero, Vector2.up);
@@ -43,13 +44,19 @@ public class DungeonMakerLS : LSystem
     public void RotateToRight()
     {
         movement.dir = Quaternion.Euler(0, 0, -90) * movement.dir;
-        Debug.Log(movement.dir);
+        //Debug.Log(movement.dir);
     }
     public void Forward()
     {
+        //Debug.Log(positions.Count);
         GameObject instance = Instantiate(prefabs[index]);
-        instance.transform.position = movement.position;
-        movement.position += movement.dir * scale;
+        do
+        {
+            movement.position += movement.dir * scale;
+            instance.transform.position = movement.position;
+        } while (positions.Exists((pos) => (pos == instance.transform.position)));
+
+        positions.Add(instance.transform.position);
     }
 
     public void RandomTile() => index = Random.Range(0, prefabs.Length);

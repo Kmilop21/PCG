@@ -48,7 +48,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
   - <Axiom>k__BackingField: 70
-    <Rule>k__BackingField: F[T+F]+T
+    <Rule>k__BackingField: F[T+F-FF]+T
     <Meaning>k__BackingField:
       m_PersistentCalls:
         m_Calls:
@@ -65,7 +65,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
   - <Axiom>k__BackingField: 84
-    <Rule>k__BackingField: -[F-[TF]]F
+    <Rule>k__BackingField: -[F+FF-T]F-F+
     <Meaning>k__BackingField:
       m_PersistentCalls:
         m_Calls:
@@ -118,4 +118,5 @@ MonoBehaviour:
   prefabs:
   - {fileID: 7985410256411628578, guid: f922d0fff67a4c84b88c2c720b13b30a, type: 3}
   - {fileID: 7985410256411628578, guid: 81017b7a9cec85947a561634346c383e, type: 3}
+  - {fileID: 7985410256411628578, guid: f922d0fff67a4c84b88c2c720b13b30a, type: 3}
   scale: {x: 1, y: 1}
