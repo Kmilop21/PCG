@@ -1,0 +1,144 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ecb190135fcfcc449b0a0aabbff115f, type: 3}
+  m_Name: Forest LS
+  m_EditorClassIdentifier: 
+  rules:
+  - <Axiom>k__BackingField: '['
+    <Grammar>k__BackingField: 
+    <Meaning>k__BackingField:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 11400000}
+          m_TargetAssemblyTypeName: ForestLS, Assembly-CSharp
+          m_MethodName: SavePosition
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: 
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - <Axiom>k__BackingField: ']'
+    <Grammar>k__BackingField: 
+    <Meaning>k__BackingField:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 11400000}
+          m_TargetAssemblyTypeName: ForestLS, Assembly-CSharp
+          m_MethodName: LoadPosition
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: 
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - <Axiom>k__BackingField: F
+    <Grammar>k__BackingField: F[S-F]FS[+FPSF][PF]-
+    <Meaning>k__BackingField:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 11400000}
+          m_TargetAssemblyTypeName: ForestLS, Assembly-CSharp
+          m_MethodName: Forward
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: 
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - <Axiom>k__BackingField: S
+    <Grammar>k__BackingField: S[+F-SF]PF[-F]PS
+    <Meaning>k__BackingField:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 11400000}
+          m_TargetAssemblyTypeName: ForestLS, Assembly-CSharp
+          m_MethodName: SetRandomScale
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: 
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - <Axiom>k__BackingField: P
+    <Grammar>k__BackingField: P[FP-]-FPS+[-F]S+
+    <Meaning>k__BackingField:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 11400000}
+          m_TargetAssemblyTypeName: ForestLS, Assembly-CSharp
+          m_MethodName: SetRandomPrefab
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: 
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - <Axiom>k__BackingField: +
+    <Grammar>k__BackingField: 
+    <Meaning>k__BackingField:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 11400000}
+          m_TargetAssemblyTypeName: ForestLS, Assembly-CSharp
+          m_MethodName: RotateToLeft
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: 
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - <Axiom>k__BackingField: '-'
+    <Grammar>k__BackingField: 
+    <Meaning>k__BackingField:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 11400000}
+          m_TargetAssemblyTypeName: ForestLS, Assembly-CSharp
+          m_MethodName: RotateToRight
+          m_Mode: 0
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: 
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  addedPersistent: 1
+  prefabs:
+  - {fileID: 4880022607586862666, guid: 3e4cd1489840cc943a78a475ff4b4f40, type: 3}
+  - {fileID: 737055752561544430, guid: 9e1a7cce3efb9bd46833cd29f7b5ca9b, type: 3}
+  - {fileID: 2927332518361267909, guid: 0c21e23cbf44f89498f13442b93bda41, type: 3}
+  - {fileID: 4300416687966858218, guid: 56438cc6832e1a14891ab3c77d41a1b1, type: 3}
+  scale: {x: 0.4, y: 0.4, z: 0.4}
+  axis: {x: 0, y: 1, z: 0}
+  minScaleValue: 0.75
+  maxScaleValue: 1.5
