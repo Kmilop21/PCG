@@ -73,7 +73,6 @@ public class DiamondSquareTerrain : MonoBehaviour
         //normalizar entre 0 y 1
         NormalizeHeightMap();
 
-
     }
 
     void NormalizeHeightMap()

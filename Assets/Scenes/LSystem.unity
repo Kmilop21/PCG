@@ -339,8 +339,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LSystem: {fileID: 11400000, guid: 03cdb2fe1350b5d42ba038526d4f3446, type: 2}
-  axiom: F
+<<<<<<< Updated upstream
+  Grammar: F
   Iteration: 4
+=======
+  axiom: F
+  Iteration: 5
+>>>>>>> Stashed changes
 --- !u!4 &664433059
 Transform:
   m_ObjectHideFlags: 0
