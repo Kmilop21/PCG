@@ -244,7 +244,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a435a6cca775bfe4a8d637c3be16c1af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LSystem: {fileID: 0}
+  LSystem: {fileID: 11400000, guid: ae07f8c6c31cf394f9c218bacffed91a, type: 2}
   Grammar: F
   Iteration: 3
 --- !u!4 &210348989
@@ -256,7 +256,7 @@ Transform:
   m_GameObject: {fileID: 210348987}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 243.40584, y: 1066.1592, z: -939.6376}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

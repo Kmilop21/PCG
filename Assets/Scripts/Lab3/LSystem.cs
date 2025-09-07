@@ -4,9 +4,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using UnityEditor.Events;
 using UnityEngine;
 using UnityEngine.Events;
+
+#if UNITY_EDITOR
+using UnityEditor.Events;
+using UnityEditor;
+#endif
 
 
 [CreateAssetMenu(fileName = "L-System Empty", menuName = "L-Systems/Empty")]
@@ -26,9 +30,11 @@ public class LSystem : ScriptableObject
     }
 
     [SerializeField] protected List<Rule> rules = new List<Rule>();
+
+    private Rule[] GetCandidates(string grammar) => rules.Where((r) => r.Axiom == grammar).ToArray();
     private Rule? SelectCandidate(string grammar)
     {
-        Rule[] candidate = rules.Where((r) => r.Axiom == grammar).ToArray();
+        Rule[] candidate = GetCandidates(grammar);
 
         if (candidate.Length == 0)
             return null;
@@ -58,7 +64,7 @@ public class LSystem : ScriptableObject
         foreach (char c in grammar)
         {
             word += c;
-            Rule? candidate = SelectCandidate(grammar);
+            Rule? candidate = SelectCandidate(word);
             if (candidate != null)
             {
                 candidate?.Meaning.Invoke();
@@ -67,7 +73,30 @@ public class LSystem : ScriptableObject
         }
     }
 
-    public void AddPersistentRuleMeaning(UnityEngine.Object obj)
+    public bool AddListenerToMeaning(string axiom, UnityAction call, int index = -1)
+    {
+        Rule[] candidates = GetCandidates(axiom);
+
+        if (candidates.Length > 0)
+        {
+            if (index == -1)
+            {
+                foreach (Rule candidate in candidates)
+                    candidate.Meaning.AddListener(call);
+            }
+            else
+                candidates[index].Meaning.AddListener(call);
+
+            return true;
+        }
+
+        return false;
+    }
+
+#if UNITY_EDITOR
+
+    [SerializeField, HideInInspector] private bool addedPersistent;
+    private void AddPersistentRuleMeaning(UnityEngine.Object obj)
     {
         Type t = obj.GetType();
 
@@ -84,14 +113,21 @@ public class LSystem : ScriptableObject
         }
     }
 
-#if UNITY_EDITOR
-    public class MyEditor : UnityEditor.Editor
+    [CustomEditor(typeof(LSystem), true)]
+
+    public class MyEditor : Editor
     {
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
 
+            LSystem lSystem = (LSystem)target;
 
+            if(!lSystem.addedPersistent)
+            {
+                lSystem.addedPersistent = true;
+                lSystem.AddPersistentRuleMeaning(lSystem);
+            }
         }
     }
 #endif
