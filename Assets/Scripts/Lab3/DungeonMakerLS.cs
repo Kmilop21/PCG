@@ -39,7 +39,7 @@ public class DungeonMakerLS : LSystem
     public void RotateToLeft()
     {
         movement.dir = Quaternion.Euler(0, 0, 90) * movement.dir;
-        Debug.Log(movement.dir);
+        //Debug.Log(movement.dir);
     }
     public void RotateToRight()
     {
