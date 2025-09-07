@@ -21,31 +21,38 @@ public class DungeonMakerLS : LSystem
         bracketInfo = new(Vector2.zero, Vector2.up);
         LoadPosition();
 
-        grammars.Add(new Grammar('[', string.Empty));
+        rules.Add(new Rule("[", string.Empty));
 
-        grammars.Add(new Grammar(']', string.Empty));
+        rules.Add(new Rule("]", string.Empty));
 
-        grammars.Add(new Grammar('F', "F[T+F]+T"));
+        rules.Add(new Rule("F", "F[T+F]+T"));
 
-        grammars.Add(new Grammar('T', "-[FF-T]F"));
+        rules.Add(new Rule("T", "-[FF-T]F"));
 
-        grammars.Add(new Grammar('+', string.Empty));
+        rules.Add(new Rule("+", string.Empty));
 
-        grammars.Add(new Grammar('-', string.Empty));
+        rules.Add(new Rule("-", string.Empty));
+
+        //AddPersistentRuleMeaning(this);
     }
 
+    [RuleMeaning("[")]
     public void SavePosition() => bracketInfo = movement;
+    [RuleMeaning("]")]
     public void LoadPosition() => movement = bracketInfo;
+    [RuleMeaning("+")]
     public void RotateToLeft()
     {
         movement.dir = Quaternion.Euler(0, 0, 90) * movement.dir;
         //Debug.Log(movement.dir);
     }
+    [RuleMeaning("-")]
     public void RotateToRight()
     {
         movement.dir = Quaternion.Euler(0, 0, -90) * movement.dir;
         //Debug.Log(movement.dir);
     }
+    [RuleMeaning("F")]
     public void Forward()
     {
         //Debug.Log(positions.Count);
@@ -58,6 +65,6 @@ public class DungeonMakerLS : LSystem
 
         positions.Add(instance.transform.position);
     }
-
+    [RuleMeaning("T")]
     public void RandomTile() => index = Random.Range(0, prefabs.Length);
 }

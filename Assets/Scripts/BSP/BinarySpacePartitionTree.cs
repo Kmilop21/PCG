@@ -22,21 +22,6 @@ public struct BinarySpacePartitionTree
             Left = null;
             Right = null;
         }
-
-        public void OnDrawGizmos()
-        {
-            Vector2[] lines = new Vector2[4];
-            Vector2 pos = Area.position;
-            lines[0] = pos;
-            lines[1] = pos + Vector2.up * Area.height;
-            lines[3] = pos + Vector2.right * Area.width;
-            lines[2] = pos + Area.size;
-
-            Gizmos.DrawLine(lines[0], lines[1]);
-            Gizmos.DrawLine(lines[1], lines[2]);
-            Gizmos.DrawLine(lines[2], lines[3]);
-            Gizmos.DrawLine(lines[3], lines[0]);
-        }
     }
 
 
@@ -52,19 +37,8 @@ public struct BinarySpacePartitionTree
     }
     public void OnDrawGizmos()
     {
-        Vector2 maxSize = root.Area.size; 
-
-        static void draw(Node current)
-        {
-            if(current == null)
-                return;
-
-            current.OnDrawGizmos();
-            draw(current.Left);
-            draw(current.Right);
-        }
-
-        draw(root);
+        foreach(Rect area in GetSubAreas())
+            DrawAreaOnGizmos(area);
     }
 
     private void CreateSubAreas(Rect current, out Rect left, out Rect right)
@@ -118,6 +92,26 @@ public struct BinarySpacePartitionTree
         Split(current.Right, iteration - 1);
     }
 
+    public Rect[] GetSubAreas()
+    {
+        List<Rect> rects = new List<Rect>();
+
+        void add(Node current)
+        {
+            if (current.Left == null && current.Right == null)
+                rects.Add(current.Area);
+            else
+            {
+                add(current.Left);
+                add(current.Right);
+            }
+        }
+
+        add(root);
+
+        return rects.ToArray();
+    }
+
     public static BinarySpacePartitionTree Generate(Rect area, Vector2 size, int iteration = -10)
     {
         static void reajust(Node current, Vector2 offSet)
@@ -145,5 +139,20 @@ public struct BinarySpacePartitionTree
     public static float GetArea(Rect area)
     {
         return Mathf.Abs((area.xMax - area.xMin) * (area.yMax - area.yMin));
+    }
+
+    public static void DrawAreaOnGizmos(Rect area)
+    {
+        Vector2[] lines = new Vector2[4];
+        Vector2 pos = area.position;
+        lines[0] = pos;
+        lines[1] = pos + Vector2.up * area.height;
+        lines[3] = pos + Vector2.right * area.width;
+        lines[2] = pos + area.size;
+
+        Gizmos.DrawLine(lines[0], lines[1]);
+        Gizmos.DrawLine(lines[1], lines[2]);
+        Gizmos.DrawLine(lines[2], lines[3]);
+        Gizmos.DrawLine(lines[3], lines[0]);
     }
 }
