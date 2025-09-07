@@ -12,34 +12,19 @@ public class LSystem : ScriptableObject
 {
     [Serializable] public struct Grammar
     {
-<<<<<<< Updated upstream
         [field: SerializeField] public char Axiom { private set; get; }
         [field: SerializeField] public string Rule { private set; get; }
-=======
-        [field: SerializeField] public char Predecessor { private set; get; }
-        [field: SerializeField] public string Successor { private set; get; }
->>>>>>> Stashed changes
         [field: SerializeField] public UnityEvent Meaning { private set; get; }
         public Grammar(char axiom, string rule)
         {
-<<<<<<< Updated upstream
             Axiom = axiom;
             Rule = rule;
-=======
-            this.Predecessor = predecessor;
-            this.Successor = successor;
->>>>>>> Stashed changes
             Meaning = new UnityEvent();
         }
     }
 
     [SerializeField] protected List<Grammar> grammars = new List<Grammar>();
-
-<<<<<<< Updated upstream
     private string Generate(char axiom) =>  grammars.First((g) => g.Axiom == axiom).Rule;
-=======
-    private string Generate(char predecessor) =>  grammars.First((g) => g.Predecessor == predecessor).Successor;
->>>>>>> Stashed changes
     public string Generate(string grammar)
     {
         string newGrammar = string.Empty;
@@ -51,11 +36,7 @@ public class LSystem : ScriptableObject
     public void Interprete(string grammar)
     {
         foreach (char c in grammar)
-<<<<<<< Updated upstream
             grammars.First((g) => g.Axiom == c).Meaning.Invoke();
-=======
-            grammars.First((g) => g.Predecessor == c).Meaning.Invoke();
->>>>>>> Stashed changes
     }
 
 #if UNITY_EDITOR
