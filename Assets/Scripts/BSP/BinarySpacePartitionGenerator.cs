@@ -17,6 +17,8 @@ public class BinarySpacePartitionGenerator : MonoBehaviour
     [SerializeField] private int iteration = 4;
 
     private BinarySpacePartitionTree tree;
+    private Rect[] zones;
+    private DiamondSquareTerrain DSterrain;
 
     private void OnDrawGizmos()
     {
@@ -28,7 +30,35 @@ public class BinarySpacePartitionGenerator : MonoBehaviour
     }
     private void Start()
     {
-        tree = BinarySpacePartitionTree.Generate(new Rect((Vector2)transform.position, size), minSize, 
+        DSterrain = GetComponent<DiamondSquareTerrain>();
+        size = new Vector2(DSterrain.size, DSterrain.size);
+
+        tree = BinarySpacePartitionTree.Generate(
+            new Rect((Vector2)transform.position, size), 
+            minSize, 
             splitToMax ? -10 : iteration);
+
+        zones = tree.GetSubAreas();
+        MarkZones();
+    }
+
+    private void MarkZones()
+    {
+        if (zones == null) return;
+
+        Terrain terrain = Terrain.activeTerrain;
+        Vector3 terrainPos = terrain.transform.position;
+
+        foreach (var zone in zones)
+        {
+            float x = UnityEngine.Random.Range(zone.xMin, zone.xMax);
+            float z = UnityEngine.Random.Range(zone.yMin, zone.yMax);
+
+            float y = terrain.SampleHeight(new Vector3(x, 0, z));
+
+            GameObject marker = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            marker.transform.position = new Vector3(x, y, z);
+            marker.transform.localScale = Vector3.one * 2;
+        }
     }
 }
