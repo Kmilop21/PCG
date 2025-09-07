@@ -34,6 +34,8 @@ public class DungeonMaker3DLS : LSystem
 
         rules.Add(new Rule("]", string.Empty));
 
+        rules.Add(new Rule("F", "FHI"));
+
         rules.Add(new Rule("S", "FHI"));
 
         rules.Add(new Rule("RI", "FHI"));
@@ -84,9 +86,35 @@ public class DungeonMaker3DLS : LSystem
         {
             movement.position += movement.dir * step;
             instance.transform.position = movement.position;
-            instance.transform.rotation = Quaternion.LookRotation(movement.dir, Vector3.up);
         } while (positions.Exists((pos) => (pos == instance.transform.position)));
 
         positions.Add(instance.transform.position);
     }
+
+    [RuleMeaning("S")]
+    public void SMeaning() => index = 0;
+
+    [RuleMeaning("RI")]
+    public void RIMeaning() => index = 1;
+
+    [RuleMeaning("RX")]
+    public void RXMeaning() => index = 2;
+
+    [RuleMeaning("RC")]
+    public void RCMeaning() => index = 3;
+
+    [RuleMeaning("RT")]
+    public void RTMeaning() => index = 4;
+
+    [RuleMeaning("HI")]
+    public void HIMeaning() => index = 5;
+
+    [RuleMeaning("HX")]
+    public void HXMeaning() => index = 6;
+
+    [RuleMeaning("HT")]
+    public void HTMeaning() => index = 7;
+
+    [RuleMeaning("D")]
+    public void DMeaning() => index = 8;
 }
