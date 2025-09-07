@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -123,6 +123,54 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &221214585
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 221214587}
+  - component: {fileID: 221214586}
+  m_Layer: 0
+  m_Name: BSP
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &221214586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 221214585}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d7992f006f448f44a8d5221b7724d90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  size: {x: 50, y: 50}
+  minSize: {x: 5, y: 5}
+  splitToMax: 1
+  iteration: 4
+--- !u!4 &221214587
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 221214585}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 352.15128, y: 87, z: 284}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &341215588
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,6 +183,7 @@ GameObject:
   - component: {fileID: 341215591}
   - component: {fileID: 341215590}
   - component: {fileID: 341215593}
+  - component: {fileID: 341215594}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -230,8 +279,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   size: 513
   height: 50
-  roughness: 0.6
+  roughness: 0.5
   initialRange: 30
+  grassLayer: {fileID: 8574412962073106934, guid: b552e8aaba408264ab95410458c17a13, type: 2}
+--- !u!114 &341215594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 341215588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d7992f006f448f44a8d5221b7724d90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  size: {x: 50, y: 50}
+  minSize: {x: 5, y: 5}
+  splitToMax: 0
+  iteration: 4
 --- !u!1 &1034309194
 GameObject:
   m_ObjectHideFlags: 0
@@ -317,13 +383,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1034309194}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: 0.19105563, y: -0, z: -0, w: 0.9815792}
+  m_LocalPosition: {x: 247.3, y: 139.4, z: -145.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 22.029, y: 0, z: 0}
 --- !u!1 &1416018132
 GameObject:
   m_ObjectHideFlags: 0
@@ -425,3 +491,4 @@ SceneRoots:
   - {fileID: 1034309197}
   - {fileID: 1416018134}
   - {fileID: 341215592}
+  - {fileID: 221214587}

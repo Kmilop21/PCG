@@ -10,6 +10,8 @@ public class DiamondSquareTerrain : MonoBehaviour
     public float roughness = 0.5f;  
     public float initialRange = 10f;
 
+    public TerrainLayer grassLayer;
+
     private float[,] heightMap;
 
     void Start()
@@ -107,7 +109,30 @@ public class DiamondSquareTerrain : MonoBehaviour
         terrain.terrainData.heightmapResolution = size;
         terrain.terrainData.size = new Vector3(size, height, size);
         terrain.terrainData.SetHeights(0, 0, heightMap);
+
+        PaintGreen(terrain);
     }
 
+    public void PaintGreen(Terrain terrain)
+    {
+        if (terrain == null) return;
 
+        TerrainData data = terrain.terrainData;
+        int w = data.alphamapWidth;
+        int h = data.alphamapHeight;
+        int layers = 1;
+
+        float[,,] alphaMaps = new float[w, h, layers];
+
+        for (int y = 0; y < h; y++)
+        {
+            for (int x = 0; x < w; x++)
+            {
+                alphaMaps[x, y, 0] = 1f;
+            }
+        }
+
+        data.terrainLayers = new TerrainLayer[] { grassLayer };
+        data.SetAlphamaps(0, 0, alphaMaps);
+    }
 }

@@ -98,12 +98,14 @@ public struct BinarySpacePartitionTree
 
         void add(Node current)
         {
+            if (current == null) return;
+
             if (current.Left == null && current.Right == null)
                 rects.Add(current.Area);
             else
             {
-                add(current.Left);
-                add(current.Right);
+                if(current.Left != null) add(current.Left);
+                if(current.Right != null) add(current.Right);
             }
         }
 
@@ -131,7 +133,7 @@ public struct BinarySpacePartitionTree
         else
             tree.Split(tree.root, iteration);
 
-        reajust(tree.root, tree.root.Area.size / 2);
+        //reajust(tree.root, tree.root.Area.size / 2);
 
         return tree;
     }
