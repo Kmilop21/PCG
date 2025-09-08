@@ -20,6 +20,8 @@ public class ForestLS : LSystem
     private (Vector3 position, Vector3 dir, Vector3 scale, int index) state;
     [System.NonSerialized] private List<Vector3> positions;
 
+    private bool first;
+
     [NonSerialized] public RandomBiomeGenerator Ref;
     public ForestLS()
     {
@@ -27,7 +29,6 @@ public class ForestLS : LSystem
         prefabs = new GameObject[0];
         savedState = new(Vector3.zero, Vector3.forward, Vector3.one, 0);
 
-        RotateToRight();
         LoadPosition();
 
         rules.Add(new Rule("[", string.Empty));
@@ -45,6 +46,12 @@ public class ForestLS : LSystem
         rules.Add(new Rule("-", string.Empty));
     }
 
+    public override void Initialize()
+    {
+        state.position = Ref.transform.position + new Vector3(257, 0, 257) / 2;
+        state.dir = Vector3.back;
+        SavePosition();
+    }
     [RuleMeaning("[")]
     public void SavePosition() => savedState = state;
     [RuleMeaning("]")]
@@ -53,42 +60,34 @@ public class ForestLS : LSystem
     public void RotateToLeft()
     {
         Vector3 pos = state.position;
-        do
-        {
+
             state.dir = Quaternion.Euler(45 * axis) * state.dir;
             pos = state.position + new Vector3(state.dir.x * scale.x, state.dir.y * scale.y, state.dir.z * scale.z);
-        } while (Ref.IsOutSide(pos));//Debug.Log(movement.dir);
     }
     [RuleMeaning("-")]
     public void RotateToRight()
     {
         Vector3 pos = state.position;
-        do
-        {
+
             state.dir = Quaternion.Euler(-45 * axis) * state.dir;
             pos = state.position + new Vector3(state.dir.x * scale.x, state.dir.y * scale.y, state.dir.z * scale.z);
-        } while (Ref.IsOutSide(pos));
+
         //Debug.Log(movement.dir);
     }
     [RuleMeaning("F")]
     public void Forward()
     {
-        state.position += new Vector3(state.dir.x * scale.x, state.dir.y * scale.y, state.dir.z * scale.z);
-        BiomeInfo? currentBiome = Ref.GetCurrentBiome(state.position);
-
-        if (currentBiome.HasValue)
+        Vector3 pos = state.position + new Vector3(state.dir.x * scale.x, state.dir.y * scale.y, state.dir.z * scale.z);
+        BiomeInfo currentBiome = Ref.GetCurrentBiome(state.position.x, state.position.z);
+        state.position = pos;
+        if (currentBiome.Flora.Length > 0)
         {
-            if (currentBiome?.Flora.Length > 0)
-            {
-                GameObject instance = Instantiate(currentBiome?.Flora[0]);
-                float y = Ref.GetHeight(new Vector3Int((int)state.position.x, 0, (int)state.position.z));
-                instance.transform.position = new Vector3(state.position.x, y, state.position.z);
-            }
-            else
-                Debug.Log("No plant");
+            GameObject instance = Instantiate(currentBiome.Flora[0]);
+            float y = Ref.GetHeight(new Vector3Int((int)state.position.x, 0, (int)state.position.z));
+            instance.transform.position = new Vector3(state.position.x, y, state.position.z);
         }
         else
-            Debug.Log("No biome");
+            Debug.Log("No plant");
     }
 
     [RuleMeaning("S")]
