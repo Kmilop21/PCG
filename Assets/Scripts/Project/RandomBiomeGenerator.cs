@@ -32,6 +32,9 @@ public class RandomBiomeGenerator : MonoBehaviour
 
     private void Start()
     {
+        for(int i = 0; i < biomes.Length; i++)
+            biomes[i].Areas = new List<Rect>();
+
         LSystemReader reader = GetComponent<LSystemReader>();  
         ForestLS fls = reader.LSystem as ForestLS;
         fls.Ref = this;
@@ -71,7 +74,7 @@ public class RandomBiomeGenerator : MonoBehaviour
         {
             int i = Random.Range(0, biomes.Length);
             dictionary[subArea] = i;
-            biomes[i].Area = subArea;
+            biomes[i].Areas.Add(subArea);
         }
         float[,,] alphamap = new float[alphaNoise.Size, alphaNoise.Size, biomes.Length];
 
@@ -88,67 +91,27 @@ public class RandomBiomeGenerator : MonoBehaviour
                     ry = Random.Range(-noise, noise);
                 rand = new Vector2(rx, ry);
                 Rect first = dictionary.Keys.First((r) => r.Contains(pos + new Vector2(x, y) + rand));
-                alphamap[x, y, dictionary[first]] = alphaNoise.Map[x, y];
+                alphamap[y, x, dictionary[first]] = alphaNoise.Map[y, x];
             }
         }
         terrain.terrainData.SetAlphamaps(0, 0, alphamap);
     }
-    public float GetHeight(Vector3Int vec)
+    public float GetHeight(int x, int y)
     {
-        return terrain.terrainData.GetHeight(vec.x, vec.z);
-    }
-    public void RePaint()
-    {
-        terrain = GetComponent<Terrain>();
-        if (terrain == null)
-        {
-            Debug.LogError("Este GameObject no tiene un componente Terrain.");
-            return;
-        }
-
-        Rect area = new Rect(transform.position, Vector2.one * heightNoise.Size);
-        tree = BinarySpacePartitionTree.Generate(area, Vector2.one * minSize);
-
-
-        terrain.terrainData.size = new Vector3(heightNoise.Size, height, heightNoise.Size);
-
-        heightNoise.Generate();
-        terrain.terrainData.heightmapResolution = heightNoise.Size;
-        terrain.terrainData.SetHeights(0, 0, heightNoise.Map);
-
-
-        alphaNoise.Generate();
-        terrain.terrainData.terrainLayers = biomes.Select((b) => b.TerrainLayer).ToArray();
-        terrain.terrainData.alphamapResolution = alphaNoise.Size;
-
-        Dictionary<Rect, int> dictionary = new Dictionary<Rect, int>();
-        foreach (Rect subArea in tree.GetSubAreas())
-            dictionary[subArea] = UnityEngine.Random.Range(0, biomes.Length);
-
-        float[,,] alphamap = new float[alphaNoise.Size, alphaNoise.Size, biomes.Length];
-
-        for (int x = 0; x < alphaNoise.Size; x++)
-        {
-            for (int y = 0; y < alphaNoise.Size; y++)
-            {
-                Vector2 pos = new Vector2(transform.position.x, transform.position.z);
-                Vector2 rand;
-                float rx = 0, ry = 0;
-                if (x >= noise && x < alphaNoise.Size - noise)
-                    rx = Random.Range(-noise, noise);
-                if (y >= noise && y < alphaNoise.Size - noise)
-                    ry = Random.Range(-noise, noise);
-                rand = new Vector2(rx, ry);
-                Rect first = dictionary.Keys.First((r) => r.Contains(pos + new Vector2(x, y) + rand));
-                alphamap[x, y, dictionary[first]] = alphaNoise.Map[x, y];
-            }
-        }
-        terrain.terrainData.SetAlphamaps(0, 0, alphamap);
+        return terrain.terrainData.GetHeight(x, y);
     }
 
     public BiomeInfo GetCurrentBiome(float x, float y)
     {
-        return biomes[Random.Range(0, biomes.Length)];
+        return biomes.First((b) =>
+        {
+            foreach(Rect area in b.Areas)
+            {
+                if (area.Contains(new Vector2(x, y)))
+                    return true;
+            }
+            return false;
+        });
     }
 
     public bool IsOutSide(float x, float y)
