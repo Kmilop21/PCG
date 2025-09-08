@@ -123,7 +123,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &221214585
+--- !u!1 &165439008
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -131,41 +131,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 221214587}
-  - component: {fileID: 221214586}
+  - component: {fileID: 165439010}
+  - component: {fileID: 165439009}
   m_Layer: 0
-  m_Name: BSP
+  m_Name: LSystem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &221214586
+--- !u!114 &165439009
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 221214585}
-  m_Enabled: 0
+  m_GameObject: {fileID: 165439008}
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d7992f006f448f44a8d5221b7724d90, type: 3}
+  m_Script: {fileID: 11500000, guid: a435a6cca775bfe4a8d637c3be16c1af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  size: {x: 50, y: 50}
-  minSize: {x: 5, y: 5}
-  splitToMax: 1
-  iteration: 4
---- !u!4 &221214587
+  LSystem: {fileID: 11400000, guid: 5a996ed718c17e345a5ca6a5c8666377, type: 2}
+  axiom: S
+  Iteration: 3
+--- !u!4 &165439010
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 221214585}
+  m_GameObject: {fileID: 165439008}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 352.15128, y: 87, z: 284}
+  m_LocalPosition: {x: 210, y: 33.66, z: 206.18434}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -209,7 +208,7 @@ TerrainCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_TerrainData: {fileID: 15600000, guid: 1b59751c0d8f3044898123cb61070f45, type: 2}
+  m_TerrainData: {fileID: 15600000, guid: b7998e202895d9448a03c499032a9cf7, type: 2}
   m_EnableTreeColliders: 1
 --- !u!218 &341215591
 Terrain:
@@ -220,7 +219,7 @@ Terrain:
   m_GameObject: {fileID: 341215588}
   m_Enabled: 1
   serializedVersion: 6
-  m_TerrainData: {fileID: 15600000, guid: 1b59751c0d8f3044898123cb61070f45, type: 2}
+  m_TerrainData: {fileID: 15600000, guid: b7998e202895d9448a03c499032a9cf7, type: 2}
   m_TreeDistance: 5000
   m_TreeBillboardDistance: 50
   m_TreeCrossFadeLength: 5
@@ -491,4 +490,4 @@ SceneRoots:
   - {fileID: 1034309197}
   - {fileID: 1416018134}
   - {fileID: 341215592}
-  - {fileID: 221214587}
+  - {fileID: 165439010}

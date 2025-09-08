@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class BinarySpacePartitionGenerator : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class BinarySpacePartitionGenerator : MonoBehaviour
     private BinarySpacePartitionTree tree;
     private Rect[] zones;
     private DiamondSquareTerrain DSterrain;
+
 
     private void OnDrawGizmos()
     {
