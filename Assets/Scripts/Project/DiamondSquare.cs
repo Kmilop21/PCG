@@ -8,10 +8,10 @@ using static UnityEngine.RuleTile.TilingRuleOutput;
 [System.Serializable]
 public struct DiamondSquare
 {
-    [SerializeField] private float initialRange;
-    [SerializeField] private float noiseValue;
+    [SerializeField] public float initialRange;
+    [SerializeField] public float noiseValue;
     public float[,] Map { private set; get; }
-    [field: SerializeField] public int Size { private set; get; }   
+    [field: SerializeField] public int Size { set; get; }   
     public DiamondSquare(int size, float initialRange, float noiseValue)
     {
         Size = size;
@@ -175,6 +175,28 @@ public struct DiamondSquare
         {
             for (int y = 0; y < Size; y++)
                 Map[x, y] = Mathf.InverseLerp(min, max, Map[x, y]);
+        }
+    }
+
+    public void readHeight(string s)
+    {
+        if(float.TryParse(s, out float result))
+        {
+            initialRange = result;
+        }
+    }
+    public void readNoise(string s)
+    {
+        if (float.TryParse(s, out float result))
+        {
+            noiseValue = result;
+        }
+    }
+    public void readSize(string s)
+    {
+        if (float.TryParse(s, out float result))
+        {
+            Size = (int)result;
         }
     }
 }

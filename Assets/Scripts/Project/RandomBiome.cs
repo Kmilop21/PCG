@@ -81,6 +81,55 @@ public class RandomBiome : MonoBehaviour
         //PaintRandom();
     }
 
+    public void RePaint()
+    {
+        terrain = GetComponent<Terrain>();
+        if (terrain == null)
+        {
+            Debug.LogError("Este GameObject no tiene un componente Terrain.");
+            return;
+        }
+
+        Rect area = new Rect(transform.position, Vector2.one * heightNoise.Size);
+        tree = BinarySpacePartitionTree.Generate(area, Vector2.one * minSize);
+
+
+        terrain.terrainData.size = new Vector3(heightNoise.Size, height, heightNoise.Size);
+
+        heightNoise.Generate();
+        terrain.terrainData.heightmapResolution = heightNoise.Size;
+        terrain.terrainData.SetHeights(0, 0, heightNoise.Map);
+
+
+        alphaNoise.Generate();
+        terrain.terrainData.terrainLayers = terrainLayers;
+        terrain.terrainData.alphamapResolution = alphaNoise.Size;
+
+        Dictionary<Rect, int> dictionary = new Dictionary<Rect, int>();
+        foreach (Rect subArea in tree.GetSubAreas())
+            dictionary[subArea] = UnityEngine.Random.Range(0, terrainLayers.Length);
+
+        float[,,] alphamap = new float[alphaNoise.Size, alphaNoise.Size, terrainLayers.Length];
+
+        for (int x = 0; x < alphaNoise.Size; x++)
+        {
+            for (int y = 0; y < alphaNoise.Size; y++)
+            {
+                Vector2 pos = new Vector2(transform.position.x, transform.position.z);
+                Vector2 rand;
+                float rx = 0, ry = 0;
+                if (x >= noise && x < alphaNoise.Size - noise)
+                    rx = Random.Range(-noise, noise);
+                if (y >= noise && y < alphaNoise.Size - noise)
+                    ry = Random.Range(-noise, noise);
+                rand = new Vector2(rx, ry);
+                Rect first = dictionary.Keys.First((r) => r.Contains(pos + new Vector2(x, y) + rand));
+                alphamap[x, y, dictionary[first]] = alphaNoise.Map[x, y];
+            }
+        }
+        terrain.terrainData.SetAlphamaps(0, 0, alphamap);
+    }
+
     private void SetHeightMapToBSP()
     {
         Dictionary<Rect, float> dictionary = new Dictionary<Rect, float>();
@@ -106,6 +155,28 @@ public class RandomBiome : MonoBehaviour
             TerrainLayer selected = terrainLayers[UnityEngine.Random.Range(0, terrainLayers.Length)];
             PaintContext ctx = TerrainPaintUtility.BeginPaintTexture(terrain, subArea, selected);
             TerrainPaintUtility.EndPaintTexture(ctx, "RandomTerrain");
+        }
+    }
+
+    public void readHeight(string s)
+    {
+        if (float.TryParse(s, out float result))
+        {
+            heightNoise.initialRange = result;
+        }
+    }
+    public void readNoise(string s)
+    {
+        if (float.TryParse(s, out float result))
+        {
+            heightNoise.noiseValue = result;
+        }
+    }
+    public void readSize(string s)
+    {
+        if (float.TryParse(s, out float result))
+        {
+            heightNoise.Size = (int)result;
         }
     }
 }
