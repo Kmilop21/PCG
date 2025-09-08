@@ -17,7 +17,7 @@ public class DungeonMaker3DLS : LSystem
 
     private void OnEnable()
     {
-        movement.position = Vector3.zero;
+        movement.position = new Vector3(100, 20, 30);
         movement.dir = Vector3.forward;
         index = 0;
     }
