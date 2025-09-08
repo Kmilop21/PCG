@@ -34,29 +34,29 @@ public class DungeonMaker3DLS : LSystem
 
         rules.Add(new Rule("]", string.Empty));
 
-        rules.Add(new Rule("F", "FHI"));
+        rules.Add(new Rule("F", "FHXF-RXF-"));
 
-        rules.Add(new Rule("S", "FHI"));
+        rules.Add(new Rule("S", "F"));
 
-        rules.Add(new Rule("RI", "FHI"));
+        rules.Add(new Rule("RI", "HIF"));
 
-        rules.Add(new Rule("RX", "FHI+FHI"));
+        rules.Add(new Rule("RX", "-HTF+HTF"));
 
         rules.Add(new Rule("RC", string.Empty));
 
-        rules.Add(new Rule("RT", "FHI"));
+        rules.Add(new Rule("RT", "-HRFHIF+RXF"));
 
-        rules.Add(new Rule("HI", "FHI"));
+        rules.Add(new Rule("HI", "HIF"));
 
-        rules.Add(new Rule("HX", "FHI-FHI"));
+        rules.Add(new Rule("HX", "HIF-HXF"));
 
-        rules.Add(new Rule("HT", "FHI+FHI"));
+        rules.Add(new Rule("HT", "HIF+HRF"));
 
-        rules.Add(new Rule("D", "FHI"));
+        rules.Add(new Rule("D", "HIF"));
 
-        rules.Add(new Rule("+", string.Empty));
+        rules.Add(new Rule("+", "+"));
 
-        rules.Add(new Rule("-", string.Empty));
+        rules.Add(new Rule("-", "-"));
 
         //AddPersistentRuleMeaning(this);
     }
@@ -68,13 +68,13 @@ public class DungeonMaker3DLS : LSystem
     [RuleMeaning("+")]
     public void RotateToLeft()
     {
-        movement.dir = Quaternion.Euler(0, 0, 90) * movement.dir;
+        movement.dir = Quaternion.Euler(0, 90, 0) * movement.dir;
         //Debug.Log(movement.dir);
     }
     [RuleMeaning("-")]
     public void RotateToRight()
     {
-        movement.dir = Quaternion.Euler(0, 0, -90) * movement.dir;
+        movement.dir = Quaternion.Euler(0, -90, 0) * movement.dir;
         //Debug.Log(movement.dir);
     }
     [RuleMeaning("F")]
@@ -86,6 +86,9 @@ public class DungeonMaker3DLS : LSystem
         {
             movement.position += movement.dir * step;
             instance.transform.position = movement.position;
+
+            Quaternion correction = Quaternion.Euler(-90, 0, 0);
+            instance.transform.rotation = Quaternion.LookRotation(movement.dir, Vector3.up) * correction;
         } while (positions.Exists((pos) => (pos == instance.transform.position)));
 
         positions.Add(instance.transform.position);
