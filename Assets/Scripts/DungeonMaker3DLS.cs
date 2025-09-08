@@ -11,20 +11,20 @@ public class DungeonMaker3DLS : LSystem
     private int index;
     private (Vector3 position, Vector3 dir) bracketInfo;
     private (Vector3 position, Vector3 dir) movement;
-    [System.NonSerialized] private List<Vector3> positions;
+    [System.NonSerialized] public List<Vector3> Positions;
 
     private const float step = 14f;
 
     private void OnEnable()
     {
-        movement.position = new Vector3(100, 20, 30);
+        movement.position = new Vector3(257, 0, 257);
         movement.dir = Vector3.forward;
         index = 0;
     }
 
     public DungeonMaker3DLS()
     {
-        positions = new List<Vector3>();
+        Positions = new List<Vector3>();
         prefabs = new GameObject[0];
         index = 0;
         bracketInfo = new(Vector2.zero, Vector2.up);
@@ -82,7 +82,7 @@ public class DungeonMaker3DLS : LSystem
     {
         if(LSHolder.instance.list.Count <= 0)
         {
-            movement.position = new Vector3(100, 20, 30);
+            movement.position = new Vector3(257, 20, 257) / 2;
             movement.dir = Vector3.forward;
             index = 0;
         }
@@ -95,9 +95,9 @@ public class DungeonMaker3DLS : LSystem
 
             Quaternion correction = Quaternion.Euler(-90, 0, 0);
             instance.transform.rotation = Quaternion.LookRotation(movement.dir, Vector3.up) * correction;
-        } while (positions.Exists((pos) => (pos == instance.transform.position)));
+        } while (Positions.Exists((pos) => (pos == instance.transform.position)));
 
-        positions.Add(instance.transform.position);
+        Positions.Add(instance.transform.position);
         LSHolder.instance.list.Add(instance);
     }
 
