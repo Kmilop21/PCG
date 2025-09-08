@@ -6755,6 +6755,7 @@ GameObject:
   - component: {fileID: 2094715293}
   - component: {fileID: 2094715292}
   - component: {fileID: 2094715291}
+  - component: {fileID: 2094715295}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -6784,12 +6785,7 @@ MonoBehaviour:
     noiseValue: 0.5
     <Size>k__BackingField: 257
   height: 20
-  terrainLayers:
-  - {fileID: 8574412962073106934, guid: 06a8e43e7f1feaa4e8d51f268038107a, type: 2}
-  - {fileID: 8574412962073106934, guid: ef0fac552a095984aa02c9db40d0b7f8, type: 2}
-  - {fileID: 8574412962073106934, guid: 5d29f9f289f50da4ba747b8b4f66ba2a, type: 2}
-  - {fileID: 8574412962073106934, guid: 9c04bec949381bf499d45d80674315c5, type: 2}
-  - {fileID: 8574412962073106934, guid: 82c6006da1e4e9e45ab8f83ff3da674b, type: 2}
+  biomes: []
   noise: 2
 --- !u!154 &2094715292
 TerrainCollider:
@@ -6865,6 +6861,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2094715295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2094715290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a435a6cca775bfe4a8d637c3be16c1af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LSystem: {fileID: 11400000, guid: ae07f8c6c31cf394f9c218bacffed91a, type: 2}
+  axiom: F
+  Iteration: 4
 --- !u!1 &2140790544
 GameObject:
   m_ObjectHideFlags: 0
