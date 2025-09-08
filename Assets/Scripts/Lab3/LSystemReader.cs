@@ -21,4 +21,30 @@ public class LSystemReader : MonoBehaviour
         Debug.Log(currentGrammar);
         LSystem.Interprete(currentGrammar);
     }
+
+    public void Restart()
+    {
+        foreach(var go in LSHolder.instance.list)
+        {
+            Destroy(go);
+        }
+
+        string currentGrammar = axiom;
+
+        for (int i = 0; i < Iteration; i++)
+        {
+            Debug.Log(currentGrammar);
+            currentGrammar = LSystem.Generate(currentGrammar);
+        }
+        Debug.Log(currentGrammar);
+        LSystem.Interprete(currentGrammar);
+    }
+
+    public void changeIterations(string s)
+    {
+        if (float.TryParse(s, out float result))
+        {
+            Iteration = (int)result;
+        }
+    }
 }

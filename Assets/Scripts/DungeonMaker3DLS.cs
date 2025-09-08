@@ -80,6 +80,12 @@ public class DungeonMaker3DLS : LSystem
     [RuleMeaning("F")]
     public void Forward()
     {
+        if(LSHolder.instance.list.Count <= 0)
+        {
+            movement.position = new Vector3(100, 20, 30);
+            movement.dir = Vector3.forward;
+            index = 0;
+        }
         //Debug.Log(positions.Count);
         GameObject instance = Instantiate(prefabs[index]);
         do
@@ -92,6 +98,7 @@ public class DungeonMaker3DLS : LSystem
         } while (positions.Exists((pos) => (pos == instance.transform.position)));
 
         positions.Add(instance.transform.position);
+        LSHolder.instance.list.Add(instance);
     }
 
     [RuleMeaning("S")]
