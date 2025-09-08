@@ -6785,8 +6785,27 @@ MonoBehaviour:
     noiseValue: 0.5
     <Size>k__BackingField: 257
   height: 20
-  biomes: []
-  noise: 2
+  biomes:
+  - <Name>k__BackingField: Plain 0
+    <Flora>k__BackingField:
+    - {fileID: 8152587351961279191, guid: 42f121b97df6ca94e977c592a9bdb953, type: 3}
+    <TerrainLayer>k__BackingField: {fileID: 8574412962073106934, guid: 06a8e43e7f1feaa4e8d51f268038107a, type: 2}
+  - <Name>k__BackingField: Plain 1
+    <Flora>k__BackingField:
+    - {fileID: 2348670100478771036, guid: d8315f248986dd946b1d41d9ed5740c8, type: 3}
+    <TerrainLayer>k__BackingField: {fileID: 8574412962073106934, guid: ef0fac552a095984aa02c9db40d0b7f8, type: 2}
+  - <Name>k__BackingField: Desert
+    <Flora>k__BackingField:
+    - {fileID: 3413260329338121036, guid: f22e7e95ef8314d4ab8d4fddbcdfbeba, type: 3}
+    <TerrainLayer>k__BackingField: {fileID: 8574412962073106934, guid: 82c6006da1e4e9e45ab8f83ff3da674b, type: 2}
+  - <Name>k__BackingField: Mud
+    <Flora>k__BackingField:
+    - {fileID: 919132149155446097, guid: 734503ebecd86f2449aa0bb1dd29ea05, type: 3}
+    <TerrainLayer>k__BackingField: {fileID: 8574412962073106934, guid: 5d29f9f289f50da4ba747b8b4f66ba2a, type: 2}
+  - <Name>k__BackingField: Montain
+    <Flora>k__BackingField: []
+    <TerrainLayer>k__BackingField: {fileID: 8574412962073106934, guid: 9c04bec949381bf499d45d80674315c5, type: 2}
+  noise: 1
 --- !u!154 &2094715292
 TerrainCollider:
   m_ObjectHideFlags: 0
