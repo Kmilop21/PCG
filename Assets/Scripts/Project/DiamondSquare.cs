@@ -178,25 +178,5 @@ public struct DiamondSquare
         }
     }
 
-    public void readHeight(string s)
-    {
-        if(float.TryParse(s, out float result))
-        {
-            initialRange = result;
-        }
-    }
-    public void readNoise(string s)
-    {
-        if (float.TryParse(s, out float result))
-        {
-            noiseValue = result;
-        }
-    }
-    public void readSize(string s)
-    {
-        if (float.TryParse(s, out float result))
-        {
-            Size = (int)result;
-        }
-    }
+    
 }
