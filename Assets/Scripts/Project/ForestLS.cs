@@ -49,7 +49,7 @@ public class ForestLS : LSystem
     public override void Initialize()
     {
         state.position = Ref.transform.position + new Vector3(257, 0, 257) / 2;
-        state.dir = Vector3.back;
+        state.dir = Vector3.forward;
         SavePosition();
     }
     [RuleMeaning("[")]
@@ -59,31 +59,41 @@ public class ForestLS : LSystem
     [RuleMeaning("+")]
     public void RotateToLeft()
     {
-        Vector3 pos = state.position;
-
+        Vector3 pos;
+        do
+        {
             state.dir = Quaternion.Euler(45 * axis) * state.dir;
             pos = state.position + new Vector3(state.dir.x * scale.x, state.dir.y * scale.y, state.dir.z * scale.z);
+        } while (Ref.IsOutSide(pos.x, pos.z));
     }
     [RuleMeaning("-")]
     public void RotateToRight()
     {
-        Vector3 pos = state.position;
-
+        Vector3 pos;
+        do
+        {
             state.dir = Quaternion.Euler(-45 * axis) * state.dir;
             pos = state.position + new Vector3(state.dir.x * scale.x, state.dir.y * scale.y, state.dir.z * scale.z);
-
+        } while (Ref.IsOutSide(pos.x, pos.z));
         //Debug.Log(movement.dir);
     }
     [RuleMeaning("F")]
     public void Forward()
     {
         Vector3 pos = state.position + new Vector3(state.dir.x * scale.x, state.dir.y * scale.y, state.dir.z * scale.z);
-        BiomeInfo currentBiome = Ref.GetCurrentBiome(state.position.x, state.position.z);
+
+        if (Ref.IsOutSide(pos.x, pos.z))
+        {
+            RotateToLeft();
+            pos = state.position + new Vector3(state.dir.x * scale.x, state.dir.y * scale.y, state.dir.z * scale.z);
+        }
+
         state.position = pos;
+        BiomeInfo currentBiome = Ref.GetCurrentBiome(state.position.x, state.position.z);
         if (currentBiome.Flora.Length > 0)
         {
             GameObject instance = Instantiate(currentBiome.Flora[0]);
-            float y = Ref.GetHeight(new Vector3Int((int)state.position.x, 0, (int)state.position.z));
+            float y = Ref.GetHeight((int)state.position.x, (int)state.position.z);
             instance.transform.position = new Vector3(state.position.x, y, state.position.z);
         }
         else
