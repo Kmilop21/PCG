@@ -7,9 +7,14 @@ public class LSystemReader : MonoBehaviour
     public LSystem LSystem;
     public string axiom;
     public int Iteration = 1;
+
+    public bool InitializeOnStart = true;
+
+    public bool Initialized { private set; get; }
     // Start is called before the first frame update
-    public virtual void Start()
+    public void Initialize()
     {
+        Initialized = false;
         LSystem.Initialize();
         string currentGrammar = axiom;
 
@@ -20,8 +25,14 @@ public class LSystemReader : MonoBehaviour
         }
         Debug.Log(currentGrammar);
         LSystem.Interprete(currentGrammar);
+        Initialized = true;
     }
 
+    public virtual void Start()
+    {
+        if (InitializeOnStart)
+            Initialize();
+    }
     public void Restart()
     {
         foreach(var go in LSHolder.instance.list)

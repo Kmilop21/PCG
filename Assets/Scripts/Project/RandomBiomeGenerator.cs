@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -14,10 +15,11 @@ public class RandomBiomeGenerator : MonoBehaviour
     [SerializeField] private DiamondSquare alphaNoise = new DiamondSquare(257, 10f, 0.5f);
     [SerializeField] private float height = 20f;
     [SerializeField] private BiomeInfo[] biomes;
-    [SerializeField] private float noise = 1; 
+    [SerializeField] private float noise = 1;
+    [SerializeField] private LSystemReader dungeonReader;
     private Terrain terrain;
     private BinarySpacePartitionTree tree;
-
+    public bool IsReady { private set; get; }
     private void OnDrawGizmos()
     {
 #if UNITY_EDITOR
@@ -59,9 +61,45 @@ public class RandomBiomeGenerator : MonoBehaviour
 
 
         SetBiomes();
+
+        reader.Initialize();
+
+        StartCoroutine(SetTerrainToDungeon());
         //PaintRandom();
     }
 
+    private IEnumerator SetTerrainToDungeon()
+    {
+        yield return new WaitUntil(() => dungeonReader.Initialized);
+
+        DungeonMaker3DLS dungeonMaker = dungeonReader.LSystem as DungeonMaker3DLS;
+
+        List<(int y, int x)> toLate = new List<(int y, int x)>();
+        float minY = float.MaxValue;
+        
+        for(int x = 0; x < heightNoise.Size; x++)
+        {
+            for(int y = 0; y < heightNoise.Size; y++)
+            {
+                Vector3 terrainPos = transform.position + new Vector3(x, 0, y);
+                bool check(Vector3 p) => Vector3.Distance(p, terrainPos) < 13f;
+                if (dungeonMaker.Positions.Exists(check))
+                {
+                    Vector3 pos = dungeonMaker.Positions.First(check);
+                    if (minY > heightNoise.Map[y, x])
+                        minY = heightNoise.Map[y, x];
+
+                    toLate.Add((y, x));
+                }
+            }
+        }
+
+        foreach ((int y, int x) coord in toLate)
+            heightNoise.Map[coord.y, coord.x] = minY;
+
+
+        terrain.terrainData.SetHeights(0, 0, heightNoise.Map);
+    }
     private void SetBiomes()
     {
         alphaNoise.Generate();

@@ -273,7 +273,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   LSystem: {fileID: 11400000, guid: ae07f8c6c31cf394f9c218bacffed91a, type: 2}
-  axiom: F
+  axiom: FFF
   Iteration: 4
 --- !u!1 &878766859
 GameObject:

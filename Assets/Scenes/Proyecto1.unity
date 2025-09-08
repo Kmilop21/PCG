@@ -420,7 +420,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2094715291}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: RandomBiome, Assembly-CSharp
         m_MethodName: RePaint
         m_Mode: 1
@@ -994,7 +994,7 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2094715291}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: RandomBiome, Assembly-CSharp
         m_MethodName: readSize
         m_Mode: 0
@@ -1414,6 +1414,7 @@ MonoBehaviour:
   LSystem: {fileID: 11400000, guid: 55dcb9f609d4610448e5eb0882b24fe1, type: 2}
   axiom: S
   Iteration: 3
+  InitializeOnStart: 1
 --- !u!4 &316968919
 Transform:
   m_ObjectHideFlags: 0
@@ -1423,7 +1424,7 @@ Transform:
   m_GameObject: {fileID: 316968917}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 120.3, y: 33.66, z: 133}
+  m_LocalPosition: {x: 120.3, y: 26.7, z: 133}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1523,6 +1524,159 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &348522097
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 348522102}
+  - component: {fileID: 348522101}
+  - component: {fileID: 348522100}
+  - component: {fileID: 348522099}
+  - component: {fileID: 348522098}
+  m_Layer: 0
+  m_Name: Terrain
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 2147483647
+  m_IsActive: 1
+--- !u!114 &348522098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 348522097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a435a6cca775bfe4a8d637c3be16c1af, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  LSystem: {fileID: 11400000, guid: ae07f8c6c31cf394f9c218bacffed91a, type: 2}
+  axiom: FFF
+  Iteration: 4
+  InitializeOnStart: 0
+--- !u!114 &348522099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 348522097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db416e4fc6464744eb70d426a4c1c099, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  minSize: 10
+  heightNoise:
+    initialRange: 10
+    noiseValue: 0.6
+    <Size>k__BackingField: 257
+  alphaNoise:
+    initialRange: 10
+    noiseValue: 0.5
+    <Size>k__BackingField: 257
+  height: 20
+  biomes:
+  - <Name>k__BackingField: Plain 0
+    <Flora>k__BackingField:
+    - {fileID: 8152587351961279191, guid: 42f121b97df6ca94e977c592a9bdb953, type: 3}
+    <TerrainLayer>k__BackingField: {fileID: 8574412962073106934, guid: 06a8e43e7f1feaa4e8d51f268038107a, type: 2}
+  - <Name>k__BackingField: Plain 1
+    <Flora>k__BackingField:
+    - {fileID: 2348670100478771036, guid: d8315f248986dd946b1d41d9ed5740c8, type: 3}
+    <TerrainLayer>k__BackingField: {fileID: 8574412962073106934, guid: ef0fac552a095984aa02c9db40d0b7f8, type: 2}
+  - <Name>k__BackingField: Desert
+    <Flora>k__BackingField:
+    - {fileID: 3413260329338121036, guid: f22e7e95ef8314d4ab8d4fddbcdfbeba, type: 3}
+    <TerrainLayer>k__BackingField: {fileID: 8574412962073106934, guid: 82c6006da1e4e9e45ab8f83ff3da674b, type: 2}
+  - <Name>k__BackingField: Mud
+    <Flora>k__BackingField:
+    - {fileID: 919132149155446097, guid: 734503ebecd86f2449aa0bb1dd29ea05, type: 3}
+    <TerrainLayer>k__BackingField: {fileID: 8574412962073106934, guid: 5d29f9f289f50da4ba747b8b4f66ba2a, type: 2}
+  - <Name>k__BackingField: Montain
+    <Flora>k__BackingField: []
+    <TerrainLayer>k__BackingField: {fileID: 8574412962073106934, guid: 9c04bec949381bf499d45d80674315c5, type: 2}
+  noise: 1
+--- !u!154 &348522100
+TerrainCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 348522097}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_TerrainData: {fileID: 15600000, guid: ce058693d33599e4eabd9668d976bdc0, type: 2}
+  m_EnableTreeColliders: 1
+--- !u!218 &348522101
+Terrain:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 348522097}
+  m_Enabled: 1
+  serializedVersion: 6
+  m_TerrainData: {fileID: 15600000, guid: ce058693d33599e4eabd9668d976bdc0, type: 2}
+  m_TreeDistance: 5000
+  m_TreeBillboardDistance: 50
+  m_TreeCrossFadeLength: 5
+  m_TreeMaximumFullLODCount: 50
+  m_DetailObjectDistance: 80
+  m_DetailObjectDensity: 1
+  m_HeightmapPixelError: 5
+  m_SplatMapDistance: 1000
+  m_HeightmapMaximumLOD: 0
+  m_ShadowCastingMode: 2
+  m_DrawHeightmap: 1
+  m_DrawInstanced: 0
+  m_DrawTreesAndFoliage: 1
+  m_StaticShadowCaster: 0
+  m_IgnoreQualitySettings: 0
+  m_ReflectionProbeUsage: 1
+  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
+  m_BakeLightProbesForTrees: 1
+  m_PreserveTreePrototypeLayers: 0
+  m_DeringLightProbesForTrees: 1
+  m_ReceiveGI: 1
+  m_ScaleInLightmap: 0.0256
+  m_LightmapParameters: {fileID: 15203, guid: 0000000000000000f000000000000000, type: 0}
+  m_GroupingID: 0
+  m_RenderingLayerMask: 1
+  m_AllowAutoConnect: 1
+  m_EnableHeightmapRayTracing: 1
+  m_EnableTreesAndDetailsRayTracing: 0
+  m_TreeMotionVectorModeOverride: 3
+--- !u!4 &348522102
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 348522097}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &397318794
 GameObject:
   m_ObjectHideFlags: 0
@@ -3850,7 +4004,7 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2094715291}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: RandomBiome, Assembly-CSharp
         m_MethodName: readHeight
         m_Mode: 0
@@ -4267,6 +4421,8 @@ GameObject:
   - component: {fileID: 1280372155}
   - component: {fileID: 1280372154}
   - component: {fileID: 1280372153}
+  - component: {fileID: 1280372156}
+  - component: {fileID: 1280372157}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -4348,6 +4504,46 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 38.893, y: 0, z: 0}
+--- !u!143 &1280372156
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1280372152}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1280372157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1280372152}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c6d896a3e4f30044a8b400df2cfece5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Speed: 15
+  RotSpeed: 25
 --- !u!1 &1366800744
 GameObject:
   m_ObjectHideFlags: 0
@@ -4872,7 +5068,7 @@ MonoBehaviour:
   m_OnEndEdit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2094715291}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: RandomBiome, Assembly-CSharp
         m_MethodName: readNoise
         m_Mode: 0
@@ -6743,139 +6939,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2060237056}
   m_CullTransparentMesh: 1
---- !u!1 &2094715290
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2094715294}
-  - component: {fileID: 2094715293}
-  - component: {fileID: 2094715292}
-  - component: {fileID: 2094715291}
-  - component: {fileID: 2094715295}
-  m_Layer: 0
-  m_Name: Terrain
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 2147483647
-  m_IsActive: 1
---- !u!114 &2094715291
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2094715290}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db416e4fc6464744eb70d426a4c1c099, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minSize: 10
-  heightNoise:
-    initialRange: 10
-    noiseValue: 0.6
-    <Size>k__BackingField: 257
-  alphaNoise:
-    initialRange: 10
-    noiseValue: 0.5
-    <Size>k__BackingField: 257
-  height: 20
-  biomes: []
-  noise: 2
---- !u!154 &2094715292
-TerrainCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2094715290}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_TerrainData: {fileID: 15600000, guid: ce058693d33599e4eabd9668d976bdc0, type: 2}
-  m_EnableTreeColliders: 1
---- !u!218 &2094715293
-Terrain:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2094715290}
-  m_Enabled: 1
-  serializedVersion: 6
-  m_TerrainData: {fileID: 15600000, guid: ce058693d33599e4eabd9668d976bdc0, type: 2}
-  m_TreeDistance: 5000
-  m_TreeBillboardDistance: 50
-  m_TreeCrossFadeLength: 5
-  m_TreeMaximumFullLODCount: 50
-  m_DetailObjectDistance: 80
-  m_DetailObjectDensity: 1
-  m_HeightmapPixelError: 5
-  m_SplatMapDistance: 1000
-  m_HeightmapMaximumLOD: 0
-  m_ShadowCastingMode: 2
-  m_DrawHeightmap: 1
-  m_DrawInstanced: 0
-  m_DrawTreesAndFoliage: 1
-  m_StaticShadowCaster: 0
-  m_IgnoreQualitySettings: 0
-  m_ReflectionProbeUsage: 1
-  m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
-  m_BakeLightProbesForTrees: 1
-  m_PreserveTreePrototypeLayers: 0
-  m_DeringLightProbesForTrees: 1
-  m_ReceiveGI: 1
-  m_ScaleInLightmap: 0.0256
-  m_LightmapParameters: {fileID: 15203, guid: 0000000000000000f000000000000000, type: 0}
-  m_GroupingID: 0
-  m_RenderingLayerMask: 1
-  m_AllowAutoConnect: 1
-  m_EnableHeightmapRayTracing: 1
-  m_EnableTreesAndDetailsRayTracing: 0
-  m_TreeMotionVectorModeOverride: 3
---- !u!4 &2094715294
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2094715290}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2094715295
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2094715290}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a435a6cca775bfe4a8d637c3be16c1af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LSystem: {fileID: 11400000, guid: ae07f8c6c31cf394f9c218bacffed91a, type: 2}
-  axiom: F
-  Iteration: 4
 --- !u!1 &2140790544
 GameObject:
   m_ObjectHideFlags: 0
@@ -6961,7 +7024,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 1280372155}
   - {fileID: 326103582}
-  - {fileID: 2094715294}
+  - {fileID: 348522102}
   - {fileID: 316968919}
   - {fileID: 303093032}
   - {fileID: 451372874}
