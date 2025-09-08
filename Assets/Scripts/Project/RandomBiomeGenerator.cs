@@ -159,6 +159,41 @@ public class RandomBiomeGenerator : MonoBehaviour
         return !area.Contains(new Vector2(x, y));
     }
 
+    public void ReGenerate()
+    {
+        for (int i = 0; i < biomes.Length; i++)
+            biomes[i].Areas = new List<Rect>();
+
+        LSystemReader reader = GetComponent<LSystemReader>();
+        ForestLS fls = reader.LSystem as ForestLS;
+        fls.Ref = this;
+        terrain = GetComponent<Terrain>();
+        if (terrain == null)
+        {
+            Debug.LogError("Este GameObject no tiene un componente Terrain.");
+            return;
+        }
+
+        Rect area = new Rect(transform.position, Vector2.one * heightNoise.Size);
+        tree = BinarySpacePartitionTree.Generate(area, Vector2.one * minSize);
+
+
+        terrain.terrainData.size = new Vector3(heightNoise.Size, height, heightNoise.Size);
+
+        heightNoise.Generate();
+        terrain.terrainData.heightmapResolution = heightNoise.Size;
+        terrain.terrainData.SetHeights(0, 0, heightNoise.Map);
+
+
+
+
+        SetBiomes();
+
+        reader.Initialize();
+
+        StartCoroutine(SetTerrainToDungeon());
+    }
+
     public void readHeight(string s)
     {
         if (float.TryParse(s, out float result))
