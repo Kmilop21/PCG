@@ -228,6 +228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db416e4fc6464744eb70d426a4c1c099, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minSize: 10
   heightNoise:
     initialRange: 10
     noiseValue: 0.6

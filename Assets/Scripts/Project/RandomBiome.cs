@@ -9,11 +9,12 @@ using UnityEngine.TerrainTools;
 
 public class RandomBiome : MonoBehaviour
 {
+    [SerializeField] private float minSize = 20f;
     [SerializeField] private DiamondSquare heightNoise = new DiamondSquare(257, 10f, 0.5f);
     [SerializeField] private DiamondSquare alphaNoise = new DiamondSquare(257, 10f, 0.5f);
     [SerializeField] private float height = 20f;
     [SerializeField] private TerrainLayer[] terrainLayers;
-    [SerializeField] private float noise = 1;
+    [SerializeField] private float noise = 1; 
     private Terrain terrain;
     private BinarySpacePartitionTree tree;
 
@@ -39,7 +40,7 @@ public class RandomBiome : MonoBehaviour
         }
 
         Rect area = new Rect(transform.position, Vector2.one * heightNoise.Size);
-        tree = BinarySpacePartitionTree.Generate(area, Vector2.one * 20);
+        tree = BinarySpacePartitionTree.Generate(area, Vector2.one * minSize);
 
 
         terrain.terrainData.size = new Vector3(heightNoise.Size, height, heightNoise.Size);
