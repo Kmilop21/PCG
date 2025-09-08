@@ -1,6 +1,6 @@
 # PCG
 
-Repositorio para el proyecto de Unity utilizado en el módulo de Generación Procedural de Contenidos.
+Repositorio para el proyecto de Unity 2022.3.21f1 utilizado en el módulo de Generación Procedural de Contenidos.
 
 Dentro del proyecto se encuentra la carpeta de escenas, la escena "Proyecto1" corresponde a una unión de 3 tecnicas de generación procedural para generar un terreno. Al ejecutar la escena se encuentran controles básicos para modificar un terreno generado con la tecnica Diamond Square y pintada con Binary Space Partition, además de una dungeon generada con L-Systems.
 
