@@ -18,20 +18,20 @@ public class LSystem : ScriptableObject
 {
     [System.Serializable] public struct Rule
     {
-        [field: SerializeField] public string Axiom { private set; get; }
-        [field: SerializeField] public string Grammar { private set; get; }
+        [field: SerializeField] public string predecessor { private set; get; }
+        [field: SerializeField] public string sucessor { private set; get; }
         [field: SerializeField] public UnityEvent Meaning { private set; get; }
         public Rule(string axiom, string product)
         {
-            Axiom = axiom;
-            Grammar = product;
+            predecessor = axiom;
+            sucessor = product;
             Meaning = new UnityEvent();
         }
     }
 
     [SerializeField] protected List<Rule> rules = new List<Rule>();
 
-    private Rule[] GetCandidates(string grammar) => rules.Where((r) => r.Axiom == grammar).ToArray();
+    private Rule[] GetCandidates(string grammar) => rules.Where((r) => r.predecessor == grammar).ToArray();
     private Rule? SelectCandidate(string grammar)
     {
         Rule[] candidate = GetCandidates(grammar);
@@ -51,7 +51,7 @@ public class LSystem : ScriptableObject
             Rule? candidate = SelectCandidate(word);
             if (candidate != null)
             {
-                newGrammar += candidate?.Grammar;
+                newGrammar += candidate?.sucessor;
                 word = string.Empty;
             }
         }
@@ -105,7 +105,7 @@ public class LSystem : ScriptableObject
             bool isValidForMethodInfo(Rule rule)
             {
                 IEnumerable<RuleMeaningAttribute> attrs = c.GetCustomAttributes<RuleMeaningAttribute>();
-                return attrs.Count((attr) => attr.Axiom == rule.Axiom) > 0;
+                return attrs.Count((attr) => attr.Axiom == rule.predecessor) > 0;
             }
             UnityAction action = Delegate.CreateDelegate(typeof(UnityAction), obj, c.Name) as UnityAction;
             foreach (Rule rule in rules.Where(isValidForMethodInfo))
