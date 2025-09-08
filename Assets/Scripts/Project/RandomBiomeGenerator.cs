@@ -82,7 +82,7 @@ public class RandomBiomeGenerator : MonoBehaviour
             for(int y = 0; y < heightNoise.Size; y++)
             {
                 Vector3 terrainPos = transform.position + new Vector3(x, 0, y);
-                bool check(Vector3 p) => Vector3.Distance(p, terrainPos) < 13f;
+                bool check(Vector3 p) => Vector3.Distance(p, terrainPos) <= 15f;
                 if (dungeonMaker.Positions.Exists(check))
                 {
                     Vector3 pos = dungeonMaker.Positions.First(check);
