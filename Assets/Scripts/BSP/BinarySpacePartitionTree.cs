@@ -35,10 +35,10 @@ public struct BinarySpacePartitionTree
         root = new Node(area);
         this.minSize = minSize;
     }
-    public void OnDrawGizmos()
+    public void OnDrawGizmos(bool drawInAxisZ = false)
     {
         foreach(Rect area in GetSubAreas())
-            DrawAreaOnGizmos(area);
+            DrawAreaOnGizmos(area, drawInAxisZ);
     }
 
     private void CreateSubAreas(Rect current, out Rect left, out Rect right)
@@ -114,6 +114,7 @@ public struct BinarySpacePartitionTree
         return rects.ToArray();
     }
 
+
     public static BinarySpacePartitionTree Generate(Rect area, Vector2 size, int iteration = -10)
     {
         static void reajust(Node current, Vector2 offSet)
@@ -143,14 +144,14 @@ public struct BinarySpacePartitionTree
         return Mathf.Abs((area.xMax - area.xMin) * (area.yMax - area.yMin));
     }
 
-    public static void DrawAreaOnGizmos(Rect area)
+    public static void DrawAreaOnGizmos(Rect area, bool drawInZ = false)
     {
-        Vector2[] lines = new Vector2[4];
-        Vector2 pos = area.position;
+        Vector3[] lines = new Vector3[4];
+        Vector3 pos = drawInZ ? new Vector3(area.position.x, 0, area.position.y) : area.position;
         lines[0] = pos;
-        lines[1] = pos + Vector2.up * area.height;
-        lines[3] = pos + Vector2.right * area.width;
-        lines[2] = pos + area.size;
+        lines[1] = pos + (drawInZ ? Vector3.forward : Vector3.up) * area.height;
+        lines[3] = pos + Vector3.right * area.width;
+        lines[2] = pos + (drawInZ ? new Vector3(area.width, 0, area.height) : area.size);
 
         Gizmos.DrawLine(lines[0], lines[1]);
         Gizmos.DrawLine(lines[1], lines[2]);
