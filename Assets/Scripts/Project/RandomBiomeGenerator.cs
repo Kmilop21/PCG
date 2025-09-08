@@ -7,13 +7,13 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.TerrainTools;
 
-public class RandomBiome : MonoBehaviour
+public class RandomBiomeGenerator : MonoBehaviour
 {
     [SerializeField] private float minSize = 20f;
     [SerializeField] private DiamondSquare heightNoise = new DiamondSquare(257, 10f, 0.5f);
     [SerializeField] private DiamondSquare alphaNoise = new DiamondSquare(257, 10f, 0.5f);
     [SerializeField] private float height = 20f;
-    [SerializeField] private TerrainLayer[] terrainLayers;
+    [SerializeField] private BiomeInfo[] biomes;
     [SerializeField] private float noise = 1; 
     private Terrain terrain;
     private BinarySpacePartitionTree tree;
@@ -32,6 +32,9 @@ public class RandomBiome : MonoBehaviour
 
     private void Start()
     {
+        LSystemReader reader = GetComponent<LSystemReader>();  
+        ForestLS fls = reader.LSystem as ForestLS;
+        fls.Ref = this;
         terrain = GetComponent<Terrain>();
         if (terrain == null)
         {
@@ -50,17 +53,29 @@ public class RandomBiome : MonoBehaviour
         terrain.terrainData.SetHeights(0, 0, heightNoise.Map);
 
 
+
+
+        SetBiomes();
+        //PaintRandom();
+    }
+
+    private void SetBiomes()
+    {
         alphaNoise.Generate();
-        terrain.terrainData.terrainLayers = terrainLayers;
+        terrain.terrainData.terrainLayers = biomes.Select((b) => b.TerrainLayer).ToArray();
         terrain.terrainData.alphamapResolution = alphaNoise.Size;
-        
+
+
         Dictionary<Rect, int> dictionary = new Dictionary<Rect, int>();
         foreach (Rect subArea in tree.GetSubAreas())
-            dictionary[subArea] = UnityEngine.Random.Range(0, terrainLayers.Length);
+        {
+            int i = Random.Range(0, biomes.Length);
+            dictionary[subArea] = i;
+            biomes[i].Area = subArea;
+        }
+        float[,,] alphamap = new float[alphaNoise.Size, alphaNoise.Size, biomes.Length];
 
-        float[,,] alphamap = new float[alphaNoise.Size, alphaNoise.Size, terrainLayers.Length];
-
-        for(int x = 0; x < alphaNoise.Size; x++)
+        for (int x = 0; x < alphaNoise.Size; x++)
         {
             for (int y = 0; y < alphaNoise.Size; y++)
             {
@@ -69,18 +84,19 @@ public class RandomBiome : MonoBehaviour
                 float rx = 0, ry = 0;
                 if (x >= noise && x < alphaNoise.Size - noise)
                     rx = Random.Range(-noise, noise);
-                if(y >= noise && y < alphaNoise.Size - noise)
+                if (y >= noise && y < alphaNoise.Size - noise)
                     ry = Random.Range(-noise, noise);
-                rand = new Vector2(rx, ry); 
+                rand = new Vector2(rx, ry);
                 Rect first = dictionary.Keys.First((r) => r.Contains(pos + new Vector2(x, y) + rand));
                 alphamap[x, y, dictionary[first]] = alphaNoise.Map[x, y];
             }
         }
         terrain.terrainData.SetAlphamaps(0, 0, alphamap);
-
-        //PaintRandom();
     }
-
+    public float GetHeight(Vector3Int vec)
+    {
+        return terrain.terrainData.GetHeight(vec.x, vec.z);
+    }
     public void RePaint()
     {
         terrain = GetComponent<Terrain>();
@@ -102,14 +118,14 @@ public class RandomBiome : MonoBehaviour
 
 
         alphaNoise.Generate();
-        terrain.terrainData.terrainLayers = terrainLayers;
+        terrain.terrainData.terrainLayers = biomes.Select((b) => b.TerrainLayer).ToArray();
         terrain.terrainData.alphamapResolution = alphaNoise.Size;
 
         Dictionary<Rect, int> dictionary = new Dictionary<Rect, int>();
         foreach (Rect subArea in tree.GetSubAreas())
-            dictionary[subArea] = UnityEngine.Random.Range(0, terrainLayers.Length);
+            dictionary[subArea] = UnityEngine.Random.Range(0, biomes.Length);
 
-        float[,,] alphamap = new float[alphaNoise.Size, alphaNoise.Size, terrainLayers.Length];
+        float[,,] alphamap = new float[alphaNoise.Size, alphaNoise.Size, biomes.Length];
 
         for (int x = 0; x < alphaNoise.Size; x++)
         {
@@ -130,32 +146,16 @@ public class RandomBiome : MonoBehaviour
         terrain.terrainData.SetAlphamaps(0, 0, alphamap);
     }
 
-    private void SetHeightMapToBSP()
+    public BiomeInfo GetCurrentBiome(float x, float y)
     {
-        Dictionary<Rect, float> dictionary = new Dictionary<Rect, float>();
-
-        foreach (Rect subArea in tree.GetSubAreas())
-            dictionary[subArea] = UnityEngine.Random.Range(-1f, 1f);
-
-        for (int x = 0; x < heightNoise.Size; x++)
-        {
-            for (int y = 0; y < heightNoise.Size; y++)
-            {
-                Vector2 pos = new Vector2(transform.position.x, transform.position.z);
-                Rect first = dictionary.Keys.First((r) => r.Contains(pos + new Vector2(x, y)));
-                heightNoise.Map[x, y] += heightNoise.Map[x, y] + dictionary[first];
-            }
-        }
+        return biomes[Random.Range(0, biomes.Length)];
     }
 
-    private void PaintRandom()
+    public bool IsOutSide(float x, float y)
     {
-        foreach (Rect subArea in tree.GetSubAreas())
-        {
-            TerrainLayer selected = terrainLayers[UnityEngine.Random.Range(0, terrainLayers.Length)];
-            PaintContext ctx = TerrainPaintUtility.BeginPaintTexture(terrain, subArea, selected);
-            TerrainPaintUtility.EndPaintTexture(ctx, "RandomTerrain");
-        }
+        Rect area = new Rect(transform.position, Vector2.one * heightNoise.Size);
+
+        return !area.Contains(new Vector2(x, y));
     }
 
     public void readHeight(string s)

@@ -30,7 +30,10 @@ public class LSystem : ScriptableObject
     }
 
     [SerializeField] protected List<Rule> rules = new List<Rule>();
+    public virtual void Initialize()
+    {
 
+    }
     private Rule[] GetCandidates(string grammar) => rules.Where((r) => r.predecessor == grammar).ToArray();
     private Rule? SelectCandidate(string grammar)
     {

@@ -10,6 +10,7 @@ public class LSystemReader : MonoBehaviour
     // Start is called before the first frame update
     public virtual void Start()
     {
+        LSystem.Initialize();
         string currentGrammar = axiom;
 
         for(int i = 0; i < Iteration; i++)

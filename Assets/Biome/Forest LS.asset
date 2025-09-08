@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Forest LS
   m_EditorClassIdentifier: 
   rules:
-  - <Axiom>k__BackingField: '['
-    <Grammar>k__BackingField: 
+  - <predecessor>k__BackingField: '['
+    <sucessor>k__BackingField: 
     <Meaning>k__BackingField:
       m_PersistentCalls:
         m_Calls:
@@ -30,8 +30,8 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - <Axiom>k__BackingField: ']'
-    <Grammar>k__BackingField: 
+  - <predecessor>k__BackingField: ']'
+    <sucessor>k__BackingField: 
     <Meaning>k__BackingField:
       m_PersistentCalls:
         m_Calls:
@@ -47,8 +47,8 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - <Axiom>k__BackingField: F
-    <Grammar>k__BackingField: F[S-F]FS[+FPSF][PF]-
+  - <predecessor>k__BackingField: F
+    <sucessor>k__BackingField: F[S-F]FS[+FPSF][PF]-
     <Meaning>k__BackingField:
       m_PersistentCalls:
         m_Calls:
@@ -64,8 +64,8 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - <Axiom>k__BackingField: S
-    <Grammar>k__BackingField: S[+F-SF]PF[-F]PS
+  - <predecessor>k__BackingField: S
+    <sucessor>k__BackingField: S[+F-SF]PF[-F]PS
     <Meaning>k__BackingField:
       m_PersistentCalls:
         m_Calls:
@@ -81,8 +81,8 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - <Axiom>k__BackingField: P
-    <Grammar>k__BackingField: P[FP-]-FPS+[-F]S+
+  - <predecessor>k__BackingField: P
+    <sucessor>k__BackingField: P[FP-]-FPS+[-F]S+
     <Meaning>k__BackingField:
       m_PersistentCalls:
         m_Calls:
@@ -98,8 +98,8 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - <Axiom>k__BackingField: +
-    <Grammar>k__BackingField: 
+  - <predecessor>k__BackingField: +
+    <sucessor>k__BackingField: 
     <Meaning>k__BackingField:
       m_PersistentCalls:
         m_Calls:
@@ -115,8 +115,8 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-  - <Axiom>k__BackingField: '-'
-    <Grammar>k__BackingField: 
+  - <predecessor>k__BackingField: '-'
+    <sucessor>k__BackingField: 
     <Meaning>k__BackingField:
       m_PersistentCalls:
         m_Calls:
@@ -133,12 +133,8 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
   addedPersistent: 1
-  prefabs:
-  - {fileID: 8152587351961279191, guid: 42f121b97df6ca94e977c592a9bdb953, type: 3}
-  - {fileID: 737055752561544430, guid: 9e1a7cce3efb9bd46833cd29f7b5ca9b, type: 3}
-  - {fileID: 2348670100478771036, guid: d8315f248986dd946b1d41d9ed5740c8, type: 3}
-  - {fileID: 4300416687966858218, guid: 56438cc6832e1a14891ab3c77d41a1b1, type: 3}
-  scale: {x: 0.4, y: 0.4, z: 0.4}
+  prefabs: []
+  scale: {x: 2, y: 2, z: 2}
   axis: {x: 0, y: 1, z: 0}
   minScaleValue: 0.75
   maxScaleValue: 1.5

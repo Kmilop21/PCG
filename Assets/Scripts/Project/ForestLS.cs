@@ -17,13 +17,18 @@ public class ForestLS : LSystem
     [SerializeField] private float maxScaleValue = 1.5f;
 
     private (Vector3 position, Vector3 dir, Vector3 scale, int index) savedState;
-    private (Vector3 position, Vector3 dir, Vector3 scale, int index) currentState;
+    private (Vector3 position, Vector3 dir, Vector3 scale, int index) state;
     [System.NonSerialized] private List<Vector3> positions;
+
+    private bool first;
+
+    [NonSerialized] public RandomBiomeGenerator Ref;
     public ForestLS()
     {
         positions = new List<Vector3>();
         prefabs = new GameObject[0];
         savedState = new(Vector3.zero, Vector3.forward, Vector3.one, 0);
+
         LoadPosition();
 
         rules.Add(new Rule("[", string.Empty));
@@ -41,40 +46,52 @@ public class ForestLS : LSystem
         rules.Add(new Rule("-", string.Empty));
     }
 
+    public override void Initialize()
+    {
+        state.position = Ref.transform.position + new Vector3(257, 0, 257) / 2;
+        state.dir = Vector3.back;
+        SavePosition();
+    }
     [RuleMeaning("[")]
-    public void SavePosition() => savedState = currentState;
+    public void SavePosition() => savedState = state;
     [RuleMeaning("]")]
-    public void LoadPosition() => currentState = savedState;
+    public void LoadPosition() => state = savedState;
     [RuleMeaning("+")]
     public void RotateToLeft()
     {
-        currentState.dir = Quaternion.Euler(45 * axis) * currentState.dir;
-        //Debug.Log(movement.dir);
+        Vector3 pos = state.position;
+
+            state.dir = Quaternion.Euler(45 * axis) * state.dir;
+            pos = state.position + new Vector3(state.dir.x * scale.x, state.dir.y * scale.y, state.dir.z * scale.z);
     }
     [RuleMeaning("-")]
     public void RotateToRight()
     {
-        currentState.dir = Quaternion.Euler(-45 * axis) * currentState.dir;
+        Vector3 pos = state.position;
+
+            state.dir = Quaternion.Euler(-45 * axis) * state.dir;
+            pos = state.position + new Vector3(state.dir.x * scale.x, state.dir.y * scale.y, state.dir.z * scale.z);
+
         //Debug.Log(movement.dir);
     }
     [RuleMeaning("F")]
     public void Forward()
     {
-        //Debug.Log(positions.Count);
-        GameObject instance = Instantiate(prefabs[currentState.index]);
-
-        do
+        Vector3 pos = state.position + new Vector3(state.dir.x * scale.x, state.dir.y * scale.y, state.dir.z * scale.z);
+        BiomeInfo currentBiome = Ref.GetCurrentBiome(state.position.x, state.position.z);
+        state.position = pos;
+        if (currentBiome.Flora.Length > 0)
         {
-            currentState.position += new Vector3(currentState.dir.x * scale.x, currentState.dir.y * scale.y, currentState.dir.z * scale.z);
-            instance.transform.position = currentState.position;
-            instance.transform.localScale = currentState.scale;
-        } while (positions.Exists((pos) => (pos == instance.transform.position)));
-
-        positions.Add(instance.transform.position);
+            GameObject instance = Instantiate(currentBiome.Flora[0]);
+            float y = Ref.GetHeight(new Vector3Int((int)state.position.x, 0, (int)state.position.z));
+            instance.transform.position = new Vector3(state.position.x, y, state.position.z);
+        }
+        else
+            Debug.Log("No plant");
     }
 
     [RuleMeaning("S")]
-    public void SetRandomScale() => currentState.scale = Vector3.one * UnityEngine.Random.Range(minScaleValue, maxScaleValue);
+    public void SetRandomScale() => state.scale = Vector3.one * UnityEngine.Random.Range(minScaleValue, maxScaleValue);
     [RuleMeaning("P")]
-    public void SetRandomPrefab() => currentState.index = UnityEngine.Random.Range(0, prefabs.Length);
+    public void SetRandomPrefab() => state.index = UnityEngine.Random.Range(0, prefabs.Length);
 }
