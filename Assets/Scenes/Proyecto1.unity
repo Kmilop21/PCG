@@ -1603,6 +1603,7 @@ MonoBehaviour:
     <Flora>k__BackingField: []
     <TerrainLayer>k__BackingField: {fileID: 8574412962073106934, guid: 9c04bec949381bf499d45d80674315c5, type: 2}
   noise: 1
+  dungeonReader: {fileID: 316968918}
 --- !u!154 &348522100
 TerrainCollider:
   m_ObjectHideFlags: 0
