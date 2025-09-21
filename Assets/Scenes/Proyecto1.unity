@@ -342,7 +342,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2094715291}
         m_TargetAssemblyTypeName: RandomBiomeGenerator, Assembly-CSharp
-        m_MethodName: ReGenerate
+        m_MethodName: Generate
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5406,12 +5406,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minSize: 10
   heightNoise:
-    initialRange: 10
-    noiseValue: 0.6
+    InitialRange: 10
+    Roughness: 0.5
     <Size>k__BackingField: 257
   alphaNoise:
-    initialRange: 10
-    noiseValue: 0.5
+    InitialRange: 10
+    Roughness: 0.5
     <Size>k__BackingField: 257
   height: 20
   biomes:
@@ -5434,8 +5434,7 @@ MonoBehaviour:
   - <Name>k__BackingField: Montain
     <Flora>k__BackingField: []
     <TerrainLayer>k__BackingField: {fileID: 8574412962073106934, guid: 9c04bec949381bf499d45d80674315c5, type: 2}
-  noise: 1
-  dungeonReader: {fileID: 0}
+  dungeonReader: {fileID: 316968918}
 --- !u!154 &2094715292
 TerrainCollider:
   m_ObjectHideFlags: 0
