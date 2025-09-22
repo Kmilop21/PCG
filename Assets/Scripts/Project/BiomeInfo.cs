@@ -11,5 +11,5 @@ public struct BiomeInfo
     [NonSerialized] public List<Rect> Areas;
     [field: SerializeField] public string Name { private set; get; }
     [field: SerializeField] public GameObject[] Flora { private set; get; }
-    [field: SerializeField] public TerrainLayer TerrainLayer { private set; get; }  
+    [field: SerializeField] public TerrainLayer TerrainLayer { private set; get; }
 }

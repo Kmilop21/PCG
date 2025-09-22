@@ -4,32 +4,33 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
+using UnityEngine;
 
 public interface IEvolutionaryStrategy<TIndividual>
 {
+    int MaxPopulation { get; }
     protected IEnumerable<TIndividual> Initialize();
     protected TIndividual Mutate(TIndividual parent);
-    protected float FitnessEvaluation(TIndividual individual);
+    float FitnessEvaluation(TIndividual individual);
     protected bool TerminationCriteria(IEnumerable<TIndividual> population);
-    public sealed TIndividual Generate(int populationMax, int maxIteration = -1)
+    public sealed TIndividual[] GeneratePopulation(int maxIteration = -1)
     {
-        int compareIndividuals(TIndividual x, TIndividual y)
+        int fitnessComparison(TIndividual x, TIndividual y)
         {
             float xValue = FitnessEvaluation(x);
             float yValue = FitnessEvaluation(y);
 
             if (xValue > yValue)
-                return 1;
+                return -1;
 
             if (xValue < yValue)
-                return -1;
+                return 1;
 
             return 0;
         }
 
         TIndividual[] population = Initialize().ToArray();
-        population.QuickSort(compareIndividuals);
-
+        population.QuickSort(fitnessComparison);
         int count = 0;
         while (!TerminationCriteria(population) && (maxIteration == -1 || count < maxIteration))
         {
@@ -38,17 +39,23 @@ public interface IEvolutionaryStrategy<TIndividual>
                 offspring[i] = Mutate(population[i]);
 
             TIndividual[] combinedPopulation = population.Concat(offspring).ToArray();
-            combinedPopulation.QuickSort(compareIndividuals);
+            combinedPopulation.QuickSort(fitnessComparison);
 
-            int length = populationMax < combinedPopulation.Length ? populationMax : combinedPopulation.Length;
+            int length = MaxPopulation;
             TIndividual[] bestIndividuals = new TIndividual[length];
             for (int i = 0; i < length; i++)
+            {
+                Debug.Log("Gen " + count + " -> Individual " + i + " - Fitness: " + FitnessEvaluation(combinedPopulation[i]));
                 bestIndividuals[i] = combinedPopulation[i];
+            }
 
             population = bestIndividuals;
             count++;
         }
 
-        return population.First();
+        return population;
     }
+
+    public sealed TIndividual GenerateBestIndividual(int maxIteration = -1)
+        => GeneratePopulation(maxIteration).First();
 }
