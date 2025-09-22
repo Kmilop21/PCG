@@ -15,7 +15,7 @@ public class RandomBiomeGenerator : MonoBehaviour
     [SerializeField] private DiamondSquare alphaNoise = new DiamondSquare(257, 10f, 0.5f);
     [SerializeField] private float height = 20f;
     [SerializeField] private BiomeInfo[] biomes;
-    [SerializeField] private float noise = 1;
+    private float noise = 1;
     [SerializeField] private LSystemReader dungeonReader;
     private Terrain terrain;
     private BinarySpacePartitionTree tree;
@@ -34,37 +34,7 @@ public class RandomBiomeGenerator : MonoBehaviour
 
     private void Start()
     {
-        for(int i = 0; i < biomes.Length; i++)
-            biomes[i].Areas = new List<Rect>();
-
-        LSystemReader reader = GetComponent<LSystemReader>();  
-        ForestLS fls = reader.LSystem as ForestLS;
-        fls.Ref = this;
-        terrain = GetComponent<Terrain>();
-        if (terrain == null)
-        {
-            Debug.LogError("Este GameObject no tiene un componente Terrain.");
-            return;
-        }
-
-        Rect area = new Rect(transform.position, Vector2.one * heightNoise.Size);
-        tree = BinarySpacePartitionTree.Generate(area, Vector2.one * minSize);
-
-
-        terrain.terrainData.size = new Vector3(heightNoise.Size, height, heightNoise.Size);
-
-        heightNoise.Generate();
-        terrain.terrainData.heightmapResolution = heightNoise.Size;
-        terrain.terrainData.SetHeights(0, 0, heightNoise.Map);
-
-
-
-
-        SetBiomes();
-
-        reader.Initialize();
-
-        StartCoroutine(SetTerrainToDungeon());
+        Generate();
         //PaintRandom();
     }
 
@@ -82,7 +52,7 @@ public class RandomBiomeGenerator : MonoBehaviour
             for(int y = 0; y < heightNoise.Size; y++)
             {
                 Vector3 terrainPos = transform.position + new Vector3(x, 0, y);
-                bool check(Vector3 p) => Vector3.Distance(p, terrainPos) < 13f;
+                bool check(Vector3 p) => Vector3.Distance(p, terrainPos) <= 15f;
                 if (dungeonMaker.Positions.Exists(check))
                 {
                     Vector3 pos = dungeonMaker.Positions.First(check);
@@ -106,7 +76,6 @@ public class RandomBiomeGenerator : MonoBehaviour
         terrain.terrainData.terrainLayers = biomes.Select((b) => b.TerrainLayer).ToArray();
         terrain.terrainData.alphamapResolution = alphaNoise.Size;
 
-
         Dictionary<Rect, int> dictionary = new Dictionary<Rect, int>();
         foreach (Rect subArea in tree.GetSubAreas())
         {
@@ -114,6 +83,7 @@ public class RandomBiomeGenerator : MonoBehaviour
             dictionary[subArea] = i;
             biomes[i].Areas.Add(subArea);
         }
+
         float[,,] alphamap = new float[alphaNoise.Size, alphaNoise.Size, biomes.Length];
 
         for (int x = 0; x < alphaNoise.Size; x++)
@@ -159,7 +129,7 @@ public class RandomBiomeGenerator : MonoBehaviour
         return !area.Contains(new Vector2(x, y));
     }
 
-    public void ReGenerate()
+    public void Generate()
     {
         for (int i = 0; i < biomes.Length; i++)
             biomes[i].Areas = new List<Rect>();
@@ -176,15 +146,10 @@ public class RandomBiomeGenerator : MonoBehaviour
 
         Rect area = new Rect(transform.position, Vector2.one * heightNoise.Size);
         tree = BinarySpacePartitionTree.Generate(area, Vector2.one * minSize);
-
-
-        terrain.terrainData.size = new Vector3(heightNoise.Size, height, heightNoise.Size);
-
+        terrain.terrainData.size = new Vector3(heightNoise.Size, heightNoise.InitialRange, heightNoise.Size);
         heightNoise.Generate();
         terrain.terrainData.heightmapResolution = heightNoise.Size;
         terrain.terrainData.SetHeights(0, 0, heightNoise.Map);
-
-
 
 
         SetBiomes();
@@ -198,14 +163,14 @@ public class RandomBiomeGenerator : MonoBehaviour
     {
         if (float.TryParse(s, out float result))
         {
-            heightNoise.initialRange = result;
+            heightNoise.InitialRange = result;
         }
     }
     public void readNoise(string s)
     {
         if (float.TryParse(s, out float result))
         {
-            heightNoise.noiseValue = result;
+            heightNoise.Roughness = result;
         }
     }
     public void readSize(string s)
