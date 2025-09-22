@@ -83,6 +83,7 @@ public class RandomBiomeGenerator : MonoBehaviour
             dictionary[subArea] = i;
             biomes[i].Areas.Add(subArea);
         }
+
         float[,,] alphamap = new float[alphaNoise.Size, alphaNoise.Size, biomes.Length];
 
         for (int x = 0; x < alphaNoise.Size; x++)
