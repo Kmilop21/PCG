@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 
-public class Enemy : MonoBehaviour
+public class BalancedEnemy : MonoBehaviour
 {
     [SerializeField] private ESBalancedEnemySettler statsSettler;
     [NonSerialized] private Stats stats;
