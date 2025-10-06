@@ -4,6 +4,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using static UnityEngine.ParticleSystem;
 
 [System.Serializable]
 public struct ArrayWrapper<T> : IList<T>
@@ -121,27 +122,6 @@ public class RoadPuzzle : MonoBehaviour
 
         (matrixCells[x.i][x.j], matrixCells[y.i][y.j]) = (matrixCells[y.i][y.j], matrixCells[x.i][x.j]);
         (second.transform.position, first.transform.position) = (first.transform.position, second.transform.position);
-        //if (x.IsMyNeighbor(y))
-        //{
-        //    (int i, int j) xIndex = IndexOf(x);
-        //    (int i, int j) yIndex = IndexOf(y);
-
-        //    int ny = x.IndexOf(y);
-        //    int nx = y.IndexOf(x);
-
-        //    for (int i = 0; i < 4; i++)
-        //    { 
-        //        x.SetNeighbors(i, y.GetNeighbor(i));
-        //        //if(i != ny)
-        //        //    x.SetNeighbors(i, y.GetNeighbor(i));
-        //        //else
-        //        //    x.SetNeighbors()
-        //        y.SetNeighbors(i, x.GetNeighbor(i));
-        //    }
-
-        //    matrixCells[xIndex.i].Array[yIndex.j] = y;
-        //    matrixCells[yIndex.i].Array[xIndex.j] = x;
-        //}
     }
 
     private void SolutionBuilder(int pathLength)
@@ -585,7 +565,11 @@ public class RoadPuzzle : MonoBehaviour
         if(neighbors.Count > 0)
         {
             PuzzleSquareCell target = neighbors[Random.Range(0, neighbors.Count)];
-            Swap(chosen, target);
+
+            (int i, int j) a = IndexOf(chosen);
+            (int i, int j) b = IndexOf(target);
+
+            (newState[a.i][a.j], newState[b.i][b.j]) = (newState[b.i][b.j], newState[a.i][a.j]);
         }
 
         return newState;
