@@ -158,12 +158,12 @@ public class RoadPuzzle : MonoBehaviour
             //Debug.Log(previous.name + " - " + p);
             (int y, int x) n = coords;
             Debug.Log(p + " - " + n);
-            (int dy, int dx) = (Mathf.Abs(p.y - n.y),  Mathf.Abs(p.x - n.x));
+            (int dy, int dx) = (Mathf.Abs(p.y - n.y), Mathf.Abs(p.x - n.x));
 
             if (dx == dy)
                 return false;
-            
-            if(p.x < n.x)
+
+            if (p.x < n.x)
                 return previousConnections[2] && nextConnections[0];
 
             if (p.x > n.x)
@@ -172,7 +172,7 @@ public class RoadPuzzle : MonoBehaviour
             if (p.y < n.y)
                 return previousConnections[1] && nextConnections[3];
 
-            if(p.y > n.y)
+            if (p.y > n.y)
                 return previousConnections[3] && nextConnections[1];
 
             return false;
@@ -359,7 +359,7 @@ public class RoadPuzzle : MonoBehaviour
         while (count < pathLength && errorThreshHold < 500f)
         {
             PuzzleSquareCell instance = PutRoad(previous);
-            if(instance != null)
+            if (instance != null)
             {
                 Advance(instance);
                 previous = instance;
@@ -383,14 +383,14 @@ public class RoadPuzzle : MonoBehaviour
 
         if (delta.j < 0)
             index = 0;
-        else if(delta.i < 0)
+        else if (delta.i < 0)
             index = 1;
-        else if(delta.j > 0)
+        else if (delta.j > 0)
             index = 2;
-        else if(delta.i > 0)
+        else if (delta.i > 0)
             index = 3;
 
-        if(index == -1)
+        if (index == -1)
             return false;
 
         return true;
@@ -412,36 +412,36 @@ public class RoadPuzzle : MonoBehaviour
     }
     private (int y, int x) IndexOf(PuzzleSquareCell cell)
     {
-        for(int y = 0; y < height; y++)
+        for (int y = 0; y < height; y++)
         {
-            for(int x = 0; x < length; x++)
+            for (int x = 0; x < length; x++)
             {
                 if (matrixCells[y][x] == cell)
-                    return (y, x);  
+                    return (y, x);
             }
         }
 
-        return (-1, -1);    
+        return (-1, -1);
     }
     private void Rebuild()
     {
         ArrayWrapper<PuzzleSquareCell>[] copy = new ArrayWrapper<PuzzleSquareCell>[height];
-        
-        for(int i = 0; i < matrixCells.Length; i++)
+
+        for (int i = 0; i < matrixCells.Length; i++)
         {
             PuzzleSquareCell[] aux = new PuzzleSquareCell[length];
             matrixCells[i].CopyTo(aux, 0);
-            copy[i] = new ArrayWrapper<PuzzleSquareCell>(aux)   ;
+            copy[i] = new ArrayWrapper<PuzzleSquareCell>(aux);
         }
 
-        for(int i = matrixCells.Length; i < height; i++)
+        for (int i = matrixCells.Length; i < height; i++)
             copy[i] = new ArrayWrapper<PuzzleSquareCell>(new PuzzleSquareCell[length]);
 
         matrixCells = copy;
 
-        for(int y = 0; y < height; y++)
+        for (int y = 0; y < height; y++)
         {
-            for(int x = 0; x < length; x++)
+            for (int x = 0; x < length; x++)
             {
                 if (matrixCells[y][x] == null)
                 {
@@ -452,6 +452,127 @@ public class RoadPuzzle : MonoBehaviour
                 }
             }
         }
+    }
+
+    public PuzzleSquareCell[,] SimulateAnnealing(PuzzleSquareCell[,] startingSolution, float startingTemperature, float minTemperature, float coolingRate)
+    {
+        PuzzleSquareCell[,] currentSolution = startingSolution;
+        float currentValue = FitnessFunction(currentSolution);
+        float temperature = startingTemperature;
+
+        while (temperature > minTemperature)
+        {
+            PuzzleSquareCell[,] neighbor = GenerateNeighbor(currentSolution);
+            float neighborValue = FitnessFunction(neighbor);
+
+            float deltaE = neighborValue - currentValue;
+
+            if (deltaE > 0)
+            {
+                currentSolution = neighbor;
+                currentValue = neighborValue;
+            }
+            else
+            {
+                float prob = Mathf.Exp(deltaE / temperature);
+                if (Random.Range(0, 1) < prob)
+                {
+                    currentSolution = neighbor;
+                    currentValue = neighborValue;
+                }
+            }
+            temperature = temperature * coolingRate;
+        }
+        return currentSolution;
+    }
+
+    private (bool solvable, int lenght, int variety) EvaluatePath(PuzzleSquareCell[,] state)
+    {
+        PuzzleSquareCell start = startPrefab;
+        PuzzleSquareCell end = endPrefab;
+
+        if (start == null || end == null) return (false, 0, 0);
+
+        Queue<(PuzzleSquareCell cell, int distance, int pathValue)> queue = new Queue<(PuzzleSquareCell, int, int)>();
+        HashSet<PuzzleSquareCell> visited = new HashSet<PuzzleSquareCell>();
+
+        queue.Enqueue((start, 0, start.value));
+        visited.Add(start);
+
+        while(queue.Count > 0)
+        {
+            var (current, dist, pathValue) = queue.Dequeue();
+
+            if (current == end) return (true, dist, pathValue);
+
+            foreach (var neighbor in GetNeighbors(current))
+            {
+                if(visited.Contains(neighbor)) continue;
+
+                if (AreConnected(current, neighbor))
+                {
+                    queue.Enqueue((neighbor, dist+1, pathValue + neighbor.value)); 
+                    visited.Add(neighbor);
+                }
+            }
+        }
+
+        return (false, 0, 0);
+    }
+
+    private bool AreConnected(PuzzleSquareCell a, PuzzleSquareCell b)
+    {
+        bool[] connectionsA = a.GetConnections();
+        bool[] connectionsB = b.GetConnections();
+
+        (int ay, int ax) = IndexOf(a);
+        (int by, int bx) = IndexOf(b);
+
+        int dy = by - ay;
+        int dx = bx - ax;
+
+        if (Mathf.Abs(dx) + Mathf.Abs(dy) != 1)
+            return false;
+
+        if (dx == 1) return connectionsA[2] && connectionsB[0];
+        if (dx == -1) return connectionsA[0] && connectionsB[2];
+
+        if (dy == 1) return connectionsA[1] && connectionsB[3];
+        if (dy == -1) return connectionsA[3] && connectionsB[1];
+
+        return false;
+    }
+
+    private float FitnessFunction(PuzzleSquareCell[,] subject)
+    {
+        var result = EvaluatePath(subject);
+        if(!result.solvable) return -1;
+
+        float lenghtScore = result.lenght;
+        float varietyScore = result.variety;
+
+        return lenghtScore + varietyScore;
+    }
+
+    private PuzzleSquareCell[,] GenerateNeighbor(PuzzleSquareCell[,] subject)
+    {
+        PuzzleSquareCell[,] newState = new PuzzleSquareCell[height, length];
+        for(int i = 0; i < height; i++)
+            for(int j = 0; j < length; j++)
+                newState[i, j] = subject[i, j];
+
+        int y = Random.Range(0, height);
+        int x = Random.Range(0, length);
+        PuzzleSquareCell chosen = newState[y, x];
+
+        var neighbors = GetNeighbors(chosen).ToList();
+        if(neighbors.Count > 0)
+        {
+            PuzzleSquareCell target = neighbors[Random.Range(0, neighbors.Count)];
+            Swap(chosen, target);
+        }
+
+        return newState;
     }
 
 #if UNITY_EDITOR

@@ -99,6 +99,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connections: 00000101
+  value: 2
 --- !u!65 &-2193723070181875204
 BoxCollider:
   m_ObjectHideFlags: 0

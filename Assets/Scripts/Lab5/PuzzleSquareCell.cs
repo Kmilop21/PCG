@@ -9,6 +9,7 @@ public class PuzzleSquareCell : MonoBehaviour
 {
     //[SerializeField] private PuzzleSquareCell[] neighbors = new PuzzleSquareCell[4];
     [SerializeField] private bool[] connections = new bool[4];
+    public int value;
 
     public bool IsValid => true;
     public float Cost => 1;
