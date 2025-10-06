@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
@@ -83,8 +84,11 @@ public class RoadPuzzle : MonoBehaviour
     [SerializeField] private PuzzleSquareCell[] buildingPrefabs;
     [SerializeField] private int length = 5;
     [SerializeField] private int height = 5;
-
     [SerializeField, HideInInspector] private ArrayWrapper<PuzzleSquareCell>[] matrixCells;
+
+    [System.NonSerialized] private StartCell start;
+    [System.NonSerialized] private EndCell end;
+
     public RoadPuzzle()
     {
         matrixCells = new ArrayWrapper<PuzzleSquareCell>[height];
@@ -135,9 +139,8 @@ public class RoadPuzzle : MonoBehaviour
             bool[] nextConnections = next.GetConnections();
 
             (int y, int x) p = IndexOf(previous);
-
-            //Debug.Log(previous.name + " - " + p);
             (int y, int x) n = coords;
+
             Debug.Log(p + " - " + n);
             (int dy, int dx) = (Mathf.Abs(p.y - n.y), Mathf.Abs(p.x - n.x));
 
@@ -234,10 +237,10 @@ public class RoadPuzzle : MonoBehaviour
             coords = newCoord;
         }
 
-        PuzzleSquareCell PutStart()
+        StartCell PutStart()
         {
             PuzzleSquareCell old = matrixCells[coords.y][coords.x];
-            PuzzleSquareCell instance = Instantiate(startPrefab, old.transform.position,
+            StartCell instance = Instantiate(startPrefab, old.transform.position,
                 old.transform.rotation, transform);
 
             int count = 0;
@@ -308,7 +311,7 @@ public class RoadPuzzle : MonoBehaviour
             return instance;
         }
 
-        PuzzleSquareCell PutEnd(PuzzleSquareCell previous)
+        EndCell PutEnd(PuzzleSquareCell previous)
         {
             List<int> indices = new List<int>();
 
@@ -318,7 +321,7 @@ public class RoadPuzzle : MonoBehaviour
             int i = indices.ElementAt(Random.Range(0, indices.Count));
 
             PuzzleSquareCell old = matrixCells[coords.y][coords.x];
-            PuzzleSquareCell instance = Instantiate(endPrefab, old.transform.position,
+            EndCell instance = Instantiate(endPrefab, old.transform.position,
                 old.transform.rotation, transform);
 
             int count = 0;
@@ -334,7 +337,8 @@ public class RoadPuzzle : MonoBehaviour
             return instance;
         }
 
-        PuzzleSquareCell previous = PutStart();
+        start = PutStart();
+        PuzzleSquareCell previous = start;
         int count = 0;
         int errorThreshHold = 0;
         while (count < pathLength && errorThreshHold < 500f)
@@ -348,7 +352,7 @@ public class RoadPuzzle : MonoBehaviour
             }
             errorThreshHold++;
         }
-        PutEnd(previous);
+        end = PutEnd(previous);
     }
 
 
@@ -378,18 +382,16 @@ public class RoadPuzzle : MonoBehaviour
     }
     public IEnumerable<PuzzleSquareCell> GetNeighbors(PuzzleSquareCell cell)
     {
-        (int y, int x) indices = IndexOf(cell);
+        (int y, int x) = IndexOf(cell);
 
-        if (indices.x > 0)
-            yield return matrixCells[indices.y][indices.x - 1];
-        if (indices.y > 0)
-            yield return matrixCells[indices.y - 1][indices.x];
-        if (indices.x < length - 1)
-            yield return matrixCells[indices.y][indices.x + 1];
-        if (indices.y < height - 1)
-            yield return matrixCells[indices.y + 1][indices.x];
-
-        yield break;
+        if (x > 0)
+            yield return matrixCells[y][x - 1];
+        if (y > 0)
+            yield return matrixCells[y - 1][x];
+        if (x < length - 1)
+            yield return matrixCells[y][x + 1];
+        if (y < height - 1)
+            yield return matrixCells[y + 1][x];
     }
     private (int y, int x) IndexOf(PuzzleSquareCell cell)
     {
@@ -478,14 +480,84 @@ public class RoadPuzzle : MonoBehaviour
                 }
             }
             temperature = temperature * coolingRate;
+
+            Debug.Log(temperature + "° enfriando...");
         }
         return currentSolution;
     }
 
     private (bool solvable, int lenght, int variety) EvaluatePath(ArrayWrapper<PuzzleSquareCell>[] state)
     {
-        PuzzleSquareCell start = startPrefab;
-        PuzzleSquareCell end = endPrefab;
+        (int y, int x) IndexOfInState(PuzzleSquareCell cell)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < length; x++)
+                {
+                    if (state[y][x] == cell)
+                        return (y, x);
+                }
+            }
+
+            return (-1, -1);
+        }
+        IEnumerable<PuzzleSquareCell> GetStateNeighbors(PuzzleSquareCell cell)
+        {
+            (int y, int x) = IndexOfInState(cell);
+            if (x > 0)
+                yield return state[y][x - 1];
+            if (y > 0)
+                yield return state[y - 1][x];
+            if (x < length - 1)
+                yield return state[y][x + 1];
+            if (y < height - 1)
+                yield return state[y + 1][x];
+        }
+
+        PuzzleSquareCell start = null;
+        PuzzleSquareCell end = null;
+
+        for(int y = 0; y < state.Length; y++)
+        {
+            for(int x = 0; x < state[y].Count; x++)
+            {
+                if (state[y][x] is StartCell)
+                    start = state[y][x];
+                else if (state[y][x] is EndCell)
+                    end = state[y][x];
+
+                if (start != null && end != null)
+                    break;
+            }
+        }
+
+        bool AreConnected(PuzzleSquareCell previous, PuzzleSquareCell next)
+        {
+            bool[] previousConnections = previous.GetConnections();
+            bool[] nextConnections = next.GetConnections();
+
+            (int y, int x) p = IndexOfInState(previous);
+            (int y, int x) n = IndexOfInState(next);
+
+            (int dy, int dx) = (Mathf.Abs(p.y - n.y), Mathf.Abs(p.x - n.x));
+
+            if (dx == dy || dx > 1 || dy > 1)
+                return false;
+
+            if (p.x < n.x)
+                return previousConnections[2] && nextConnections[0];
+
+            if (p.x > n.x)
+                return previousConnections[0] && nextConnections[2];
+
+            if (p.y < n.y)
+                return previousConnections[1] && nextConnections[3];
+
+            if (p.y > n.y)
+                return previousConnections[3] && nextConnections[1];
+
+            return false;
+        }
 
         if (start == null || end == null) return (false, 0, 0);
 
@@ -497,11 +569,12 @@ public class RoadPuzzle : MonoBehaviour
 
         while(queue.Count > 0)
         {
+            Debug.Log("Sigo aqui");
             var (current, dist, pathValue) = queue.Dequeue();
 
             if (current == end) return (true, dist, pathValue);
 
-            foreach (var neighbor in GetNeighbors(current))
+            foreach (var neighbor in GetStateNeighbors(current))
             {
                 if(visited.Contains(neighbor)) continue;
 
@@ -514,29 +587,6 @@ public class RoadPuzzle : MonoBehaviour
         }
 
         return (false, 0, 0);
-    }
-
-    private bool AreConnected(PuzzleSquareCell a, PuzzleSquareCell b)
-    {
-        bool[] connectionsA = a.GetConnections();
-        bool[] connectionsB = b.GetConnections();
-
-        (int ay, int ax) = IndexOf(a);
-        (int by, int bx) = IndexOf(b);
-
-        int dy = by - ay;
-        int dx = bx - ax;
-
-        if (Mathf.Abs(dx) + Mathf.Abs(dy) != 1)
-            return false;
-
-        if (dx == 1) return connectionsA[2] && connectionsB[0];
-        if (dx == -1) return connectionsA[0] && connectionsB[2];
-
-        if (dy == 1) return connectionsA[1] && connectionsB[3];
-        if (dy == -1) return connectionsA[3] && connectionsB[1];
-
-        return false;
     }
 
     private float FitnessFunction(ArrayWrapper<PuzzleSquareCell>[] subject)
