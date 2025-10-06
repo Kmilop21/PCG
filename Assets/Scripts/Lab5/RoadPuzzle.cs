@@ -94,6 +94,7 @@ public class RoadPuzzle : MonoBehaviour
     void Start()
     {
         SolutionBuilder(10);
+        matrixCells = SimulateAnnealing(matrixCells, 10, 1, 1);
     }
 
     // Update is called once per frame
@@ -454,15 +455,30 @@ public class RoadPuzzle : MonoBehaviour
         }
     }
 
-    public PuzzleSquareCell[,] SimulateAnnealing(PuzzleSquareCell[,] startingSolution, float startingTemperature, float minTemperature, float coolingRate)
+    public ArrayWrapper<PuzzleSquareCell>[] CloneMatrix(ArrayWrapper<PuzzleSquareCell>[] source)
     {
-        PuzzleSquareCell[,] currentSolution = startingSolution;
+        ArrayWrapper<PuzzleSquareCell>[] copy = new ArrayWrapper<PuzzleSquareCell>[height];
+        for (int y = 0; y < height; y++)
+        {
+            PuzzleSquareCell[] rowCopy = new PuzzleSquareCell[length];
+            for (int x = 0; x < length; x++)
+            {
+                rowCopy[x] = source[y][x];
+            }
+            copy[y] = new ArrayWrapper<PuzzleSquareCell>(rowCopy);
+        }
+        return copy;
+    } 
+
+    public ArrayWrapper<PuzzleSquareCell>[] SimulateAnnealing(ArrayWrapper<PuzzleSquareCell>[] startingSolution, float startingTemperature, float minTemperature, float coolingRate)
+    {
+        var currentSolution = startingSolution;
         float currentValue = FitnessFunction(currentSolution);
         float temperature = startingTemperature;
 
         while (temperature > minTemperature)
         {
-            PuzzleSquareCell[,] neighbor = GenerateNeighbor(currentSolution);
+            var neighbor = GenerateNeighbor(currentSolution);
             float neighborValue = FitnessFunction(neighbor);
 
             float deltaE = neighborValue - currentValue;
@@ -486,7 +502,7 @@ public class RoadPuzzle : MonoBehaviour
         return currentSolution;
     }
 
-    private (bool solvable, int lenght, int variety) EvaluatePath(PuzzleSquareCell[,] state)
+    private (bool solvable, int lenght, int variety) EvaluatePath(ArrayWrapper<PuzzleSquareCell>[] state)
     {
         PuzzleSquareCell start = startPrefab;
         PuzzleSquareCell end = endPrefab;
@@ -543,7 +559,7 @@ public class RoadPuzzle : MonoBehaviour
         return false;
     }
 
-    private float FitnessFunction(PuzzleSquareCell[,] subject)
+    private float FitnessFunction(ArrayWrapper<PuzzleSquareCell>[] subject)
     {
         var result = EvaluatePath(subject);
         if(!result.solvable) return -1;
@@ -551,19 +567,19 @@ public class RoadPuzzle : MonoBehaviour
         float lenghtScore = result.lenght;
         float varietyScore = result.variety;
 
-        return lenghtScore + varietyScore;
+        float fitness = lenghtScore + varietyScore;
+        Debug.Log("Fitness: " + fitness);
+
+        return fitness;
     }
 
-    private PuzzleSquareCell[,] GenerateNeighbor(PuzzleSquareCell[,] subject)
+    private ArrayWrapper<PuzzleSquareCell>[] GenerateNeighbor(ArrayWrapper<PuzzleSquareCell>[] subject)
     {
-        PuzzleSquareCell[,] newState = new PuzzleSquareCell[height, length];
-        for(int i = 0; i < height; i++)
-            for(int j = 0; j < length; j++)
-                newState[i, j] = subject[i, j];
+        var newState = CloneMatrix(subject);
 
         int y = Random.Range(0, height);
         int x = Random.Range(0, length);
-        PuzzleSquareCell chosen = newState[y, x];
+        PuzzleSquareCell chosen = newState[y][x];
 
         var neighbors = GetNeighbors(chosen).ToList();
         if(neighbors.Count > 0)
