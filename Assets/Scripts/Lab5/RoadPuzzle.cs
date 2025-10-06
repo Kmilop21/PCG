@@ -99,7 +99,7 @@ public class RoadPuzzle : MonoBehaviour
     void Start()
     {
         SolutionBuilder(10);
-        matrixCells = SimulateAnnealing(matrixCells, 10, 1, 1);
+        matrixCells = SimulateAnnealing(matrixCells, 10, 1, 0.5f);
     }
 
     // Update is called once per frame
@@ -569,7 +569,7 @@ public class RoadPuzzle : MonoBehaviour
 
         while(queue.Count > 0)
         {
-            Debug.Log("Sigo aqui");
+            //Debug.Log("Sigo aqui");
             var (current, dist, pathValue) = queue.Dequeue();
 
             if (current == end) return (true, dist, pathValue);
