@@ -423,8 +423,14 @@ public class RoadPuzzle : MonoBehaviour
     {
         for(int y = 0; y < matrixCells.Length; y++)
         {
-            for(int x = 0; x < matrixCells[y].Count; x++)
+            for (int x = 0; x < matrixCells[y].Count; x++)
+            {
+#if UNITY_EDITOR
+                DestroyImmediate(matrixCells[y][x], true);
+#else
                 Destroy(matrixCells[y][x]);
+#endif
+            }
         }
 
         matrixCells = new ArrayWrapper<PuzzleSquareCell>[height];
