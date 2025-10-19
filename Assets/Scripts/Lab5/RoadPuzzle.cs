@@ -85,7 +85,7 @@ public class RoadPuzzle : MonoBehaviour
     [SerializeField] private int length = 5;
     [SerializeField] private int height = 5;
     [SerializeField, HideInInspector] private ArrayWrapper<PuzzleSquareCell>[] matrixCells;
-
+    [SerializeField] private RoadPuzzle annealing;
     [System.NonSerialized] private StartCell start;
     [System.NonSerialized] private EndCell end;
 
@@ -98,25 +98,40 @@ public class RoadPuzzle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SolutionBuilder(10);
-        matrixCells = SimulateAnnealing(matrixCells, 10, 1, 0.5f);
+        if (annealing != null)
+        {
+            SolutionBuilder(10);
+            ArrayWrapper<PuzzleSquareCell>[] matrix = SimulateAnnealing(matrixCells, 15, 1, 0.75f);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < length; x++)
+                {
+                    if(annealing.matrixCells[y][x] is EmptyCell)
+                        Destroy(annealing.matrixCells[y][x]);
+                    PuzzleSquareCell clone = Instantiate(matrix[y][x], annealing.transform);
+                    clone.transform.position = (Vector2)annealing.transform.position
+                        + new Vector2(x, y) * emptyPrefab.transform.localScale;
+                }
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButton(0))
-        {
-            Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10);
-            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(pos), Vector2.zero);
-            if (hit.collider != null)
-            {
-                if (hit.collider.TryGetComponent(out PuzzleSquareCell cell))
-                {
-                    cell.GetComponent<SpriteRenderer>().color = Color.black;
-                }
-            }
-        }
+        //if (Input.GetMouseButton(0))
+        //{
+        //    Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10);
+        //    RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(pos), Vector2.zero);
+        //    if (hit.collider != null)
+        //    {
+        //        if (hit.collider.TryGetComponent(out PuzzleSquareCell cell))
+        //        {
+        //            cell.GetComponent<SpriteRenderer>().color = Color.black;
+        //        }
+        //    }
+        //}
     }
 
     private void Swap(PuzzleSquareCell first, PuzzleSquareCell second)
@@ -141,7 +156,6 @@ public class RoadPuzzle : MonoBehaviour
             (int y, int x) p = IndexOf(previous);
             (int y, int x) n = coords;
 
-            Debug.Log(p + " - " + n);
             (int dy, int dx) = (Mathf.Abs(p.y - n.y), Mathf.Abs(p.x - n.x));
 
             if (dx == dy)
@@ -164,7 +178,6 @@ public class RoadPuzzle : MonoBehaviour
         bool InvalidCell(PuzzleSquareCell current)
         {
 
-            Debug.Log(matrixCells[0][0].GetType());
             bool[] connections = current.GetConnections();
             bool invalidLeftMove = connections[0] && (coords.x - 1 < 0);
             bool invalidUpMove = connections[1] && (coords.y + 1 >= height);
@@ -436,6 +449,16 @@ public class RoadPuzzle : MonoBehaviour
             }
         }
     }
+    
+    private void ChangeCellPosition()
+    {
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < length; x++)
+                    matrixCells[y][x].transform.position = (Vector2)transform.position 
+                    + new Vector2(x, y) * emptyPrefab.transform.localScale;
+        }
+    }
 
     public ArrayWrapper<PuzzleSquareCell>[] CloneMatrix(ArrayWrapper<PuzzleSquareCell>[] source)
     {
@@ -488,32 +511,6 @@ public class RoadPuzzle : MonoBehaviour
 
     private (bool solvable, int lenght, int variety) EvaluatePath(ArrayWrapper<PuzzleSquareCell>[] state)
     {
-        (int y, int x) IndexOfInState(PuzzleSquareCell cell)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < length; x++)
-                {
-                    if (state[y][x] == cell)
-                        return (y, x);
-                }
-            }
-
-            return (-1, -1);
-        }
-        IEnumerable<PuzzleSquareCell> GetStateNeighbors(PuzzleSquareCell cell)
-        {
-            (int y, int x) = IndexOfInState(cell);
-            if (x > 0)
-                yield return state[y][x - 1];
-            if (y > 0)
-                yield return state[y - 1][x];
-            if (x < length - 1)
-                yield return state[y][x + 1];
-            if (y < height - 1)
-                yield return state[y + 1][x];
-        }
-
         PuzzleSquareCell start = null;
         PuzzleSquareCell end = null;
 
@@ -536,8 +533,8 @@ public class RoadPuzzle : MonoBehaviour
             bool[] previousConnections = previous.GetConnections();
             bool[] nextConnections = next.GetConnections();
 
-            (int y, int x) p = IndexOfInState(previous);
-            (int y, int x) n = IndexOfInState(next);
+            (int y, int x) p = IndexOfState(state, previous);
+            (int y, int x) n = IndexOfState(state, next);
 
             (int dy, int dx) = (Mathf.Abs(p.y - n.y), Mathf.Abs(p.x - n.x));
 
@@ -574,7 +571,7 @@ public class RoadPuzzle : MonoBehaviour
 
             if (current == end) return (true, dist, pathValue);
 
-            foreach (var neighbor in GetStateNeighbors(current))
+            foreach (var neighbor in GetStateNeighbors(state, current))
             {
                 if(visited.Contains(neighbor)) continue;
 
@@ -603,26 +600,52 @@ public class RoadPuzzle : MonoBehaviour
         return fitness;
     }
 
-    private ArrayWrapper<PuzzleSquareCell>[] GenerateNeighbor(ArrayWrapper<PuzzleSquareCell>[] subject)
+    private ArrayWrapper<PuzzleSquareCell>[] GenerateNeighbor(ArrayWrapper<PuzzleSquareCell>[] state)
     {
-        var newState = CloneMatrix(subject);
-
+        var newState = CloneMatrix(state);
         int y = Random.Range(0, height);
         int x = Random.Range(0, length);
         PuzzleSquareCell chosen = newState[y][x];
 
-        var neighbors = GetNeighbors(chosen).ToList();
+        var neighbors = GetStateNeighbors(state, chosen).ToList();
+        
         if(neighbors.Count > 0)
         {
             PuzzleSquareCell target = neighbors[Random.Range(0, neighbors.Count)];
 
-            (int i, int j) a = IndexOf(chosen);
-            (int i, int j) b = IndexOf(target);
+            (int i, int j) a = IndexOfState(state, chosen);
+            (int i, int j) b = IndexOfState(state, target);
 
             (newState[a.i][a.j], newState[b.i][b.j]) = (newState[b.i][b.j], newState[a.i][a.j]);
         }
 
         return newState;
+    }
+
+    private (int y, int x) IndexOfState(ArrayWrapper<PuzzleSquareCell>[] state, PuzzleSquareCell cell)
+    {
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < length; x++)
+            {
+                if (state[y][x] == cell)
+                    return (y, x);
+            }
+        }
+        return (-1, -1);
+    }
+    private IEnumerable<PuzzleSquareCell> GetStateNeighbors(ArrayWrapper<PuzzleSquareCell>[] state,
+        PuzzleSquareCell cell)
+    {
+        (int y, int x) = IndexOfState(state, cell);
+        if (x > 0)
+            yield return state[y][x - 1];
+        if (y > 0)
+            yield return state[y - 1][x];
+        if (x < length - 1)
+            yield return state[y][x + 1];
+        if (y < height - 1)
+            yield return state[y + 1][x];
     }
 
 #if UNITY_EDITOR
