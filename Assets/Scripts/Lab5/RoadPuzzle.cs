@@ -82,8 +82,8 @@ public class RoadPuzzle : MonoBehaviour
     [SerializeField] private EndCell endPrefab;
     [SerializeField] private PuzzleSquareCell emptyPrefab;
     [SerializeField] private PuzzleSquareCell[] buildingPrefabs;
-    [SerializeField] private int length = 5;
-    [SerializeField] private int height = 5;
+    [SerializeField] private int width = 4;
+    [SerializeField] private int height = 4;
     [SerializeField, HideInInspector] private ArrayWrapper<PuzzleSquareCell>[] matrixCells;
     [SerializeField] private RoadPuzzle annealing;
     [System.NonSerialized] private StartCell start;
@@ -92,8 +92,8 @@ public class RoadPuzzle : MonoBehaviour
     public RoadPuzzle()
     {
         matrixCells = new ArrayWrapper<PuzzleSquareCell>[height];
-        for (int i = 0; i < length; i++)
-            matrixCells[i] = new ArrayWrapper<PuzzleSquareCell>(new PuzzleSquareCell[length]);
+        for (int i = 0; i < width; i++)
+            matrixCells[i] = new ArrayWrapper<PuzzleSquareCell>(new PuzzleSquareCell[width]);
     }
     // Start is called before the first frame update
     void Start()
@@ -101,11 +101,11 @@ public class RoadPuzzle : MonoBehaviour
         if (annealing != null)
         {
             SolutionBuilder(10);
-            ArrayWrapper<PuzzleSquareCell>[] matrix = SimulateAnnealing(matrixCells, 15, 1, 0.75f);
+            ArrayWrapper<PuzzleSquareCell>[] matrix = SimulateAnnealing(matrixCells, 100, 1, 0.75f);
 
             for (int y = 0; y < height; y++)
             {
-                for (int x = 0; x < length; x++)
+                for (int x = 0; x < width; x++)
                 {
                     if(annealing.matrixCells[y][x] is EmptyCell)
                         Destroy(annealing.matrixCells[y][x]);
@@ -145,8 +145,7 @@ public class RoadPuzzle : MonoBehaviour
 
     private void SolutionBuilder(int pathLength)
     {
-        (int y, int x) coords = (Random.Range(0, height), Random.Range(0, length));
-
+        (int y, int x) coords = (Random.Range(0, height), Random.Range(0, width));
 
         bool IsConnected(PuzzleSquareCell previous, PuzzleSquareCell next)
         {
@@ -175,13 +174,14 @@ public class RoadPuzzle : MonoBehaviour
 
             return false;
         }
+        
         bool InvalidCell(PuzzleSquareCell current)
         {
 
             bool[] connections = current.GetConnections();
             bool invalidLeftMove = connections[0] && (coords.x - 1 < 0);
             bool invalidUpMove = connections[1] && (coords.y + 1 >= height);
-            bool invalidRightMove = connections[2] && (coords.x + 1 >= length);
+            bool invalidRightMove = connections[2] && (coords.x + 1 >= width);
             bool invalidDownMove = connections[3] && (coords.y - 1 < 0);
             return invalidLeftMove || invalidUpMove || invalidRightMove || invalidDownMove;
         }
@@ -190,7 +190,7 @@ public class RoadPuzzle : MonoBehaviour
         {
             bool invalidLeft = coord.x < 0;
             bool invalidUp = coord.y >= height;
-            bool invalidRight = coord.x >= length;
+            bool invalidRight = coord.x >= width;
             bool invalidDown = coord.y < 0;
 
             return invalidLeft || invalidUp || invalidRight || invalidDown || matrixCells[coord.y][coord.x] is not EmptyCell;
@@ -205,7 +205,7 @@ public class RoadPuzzle : MonoBehaviour
                 condition &= !connections[0] || matrixCells[coords.y][coords.x - 1] is not EmptyCell;
             if (coords.y > 0)
                 condition &= !connections[3] || matrixCells[coords.y - 1][coords.x] is not EmptyCell;
-            if (coords.x < length - 1)
+            if (coords.x < width - 1)
                 condition &= !connections[2] || matrixCells[coords.y][coords.x + 1] is not EmptyCell;
             if (coords.y < height - 1)
                 condition &= !connections[1] || matrixCells[coords.y + 1][coords.x] is not EmptyCell;
@@ -401,7 +401,7 @@ public class RoadPuzzle : MonoBehaviour
             yield return matrixCells[y][x - 1];
         if (y > 0)
             yield return matrixCells[y - 1][x];
-        if (x < length - 1)
+        if (x < width - 1)
             yield return matrixCells[y][x + 1];
         if (y < height - 1)
             yield return matrixCells[y + 1][x];
@@ -410,7 +410,7 @@ public class RoadPuzzle : MonoBehaviour
     {
         for (int y = 0; y < height; y++)
         {
-            for (int x = 0; x < length; x++)
+            for (int x = 0; x < width; x++)
             {
                 if (matrixCells[y][x] == cell)
                     return (y, x);
@@ -421,31 +421,38 @@ public class RoadPuzzle : MonoBehaviour
     }
     private void Rebuild()
     {
-        ArrayWrapper<PuzzleSquareCell>[] copy = new ArrayWrapper<PuzzleSquareCell>[height];
-
-        for (int i = 0; i < matrixCells.Length; i++)
+        for(int y = 0; y < matrixCells.Length; y++)
         {
-            PuzzleSquareCell[] aux = new PuzzleSquareCell[length];
-            matrixCells[i].CopyTo(aux, 0);
-            copy[i] = new ArrayWrapper<PuzzleSquareCell>(aux);
+            for(int x = 0; x < matrixCells[y].Count; x++)
+                Destroy(matrixCells[y][x]);
         }
 
-        for (int i = matrixCells.Length; i < height; i++)
-            copy[i] = new ArrayWrapper<PuzzleSquareCell>(new PuzzleSquareCell[length]);
+        matrixCells = new ArrayWrapper<PuzzleSquareCell>[height];
 
-        matrixCells = copy;
+        for(int i = 0; i < height; i++)
+            matrixCells[i] = new ArrayWrapper<PuzzleSquareCell>(new PuzzleSquareCell[width]);
+        //ArrayWrapper<PuzzleSquareCell>[] copy = new ArrayWrapper<PuzzleSquareCell>[height];
+
+        //for (int i = 0; i < height; i++)
+        //{
+        //    PuzzleSquareCell[] aux = new PuzzleSquareCell[width];
+        //    matrixCells[i].CopyTo(aux, 0);
+        //    copy[i] = new ArrayWrapper<PuzzleSquareCell>(aux);
+        //}
+
+        //for (int i = matrixCells.Length; i < height; i++)
+        //    copy[i] = new ArrayWrapper<PuzzleSquareCell>(new PuzzleSquareCell[width]);
+
+        //matrixCells = copy;
 
         for (int y = 0; y < height; y++)
         {
-            for (int x = 0; x < length; x++)
+            for (int x = 0; x < width; x++)
             {
-                if (matrixCells[y][x] == null)
-                {
-                    PuzzleSquareCell cell = Instantiate(emptyPrefab, transform);
-                    cell.name = "Cell (" + y + ", " + x + ")";
-                    cell.transform.position = (Vector2)transform.position + new Vector2(x, y) * emptyPrefab.transform.localScale;
-                    matrixCells[y][x] = cell;
-                }
+                PuzzleSquareCell cell = Instantiate(emptyPrefab, transform);
+                cell.name = "Cell (" + y + ", " + x + ")";
+                cell.transform.position = (Vector2)transform.position + new Vector2(x, y) * emptyPrefab.transform.localScale;
+                matrixCells[y][x] = cell;
             }
         }
     }
@@ -454,7 +461,7 @@ public class RoadPuzzle : MonoBehaviour
     {
         for (int y = 0; y < height; y++)
         {
-            for (int x = 0; x < length; x++)
+            for (int x = 0; x < width; x++)
                     matrixCells[y][x].transform.position = (Vector2)transform.position 
                     + new Vector2(x, y) * emptyPrefab.transform.localScale;
         }
@@ -465,8 +472,8 @@ public class RoadPuzzle : MonoBehaviour
         ArrayWrapper<PuzzleSquareCell>[] copy = new ArrayWrapper<PuzzleSquareCell>[height];
         for (int y = 0; y < height; y++)
         {
-            PuzzleSquareCell[] rowCopy = new PuzzleSquareCell[length];
-            for (int x = 0; x < length; x++)
+            PuzzleSquareCell[] rowCopy = new PuzzleSquareCell[width];
+            for (int x = 0; x < width; x++)
             {
                 rowCopy[x] = source[y][x];
             }
@@ -502,100 +509,117 @@ public class RoadPuzzle : MonoBehaviour
                     currentValue = neighborValue;
                 }
             }
-            temperature = temperature * coolingRate;
+            temperature *= coolingRate;
 
             Debug.Log(temperature + "° enfriando...");
         }
         return currentSolution;
     }
 
-    private (bool solvable, int lenght, int variety) EvaluatePath(ArrayWrapper<PuzzleSquareCell>[] state)
-    {
-        PuzzleSquareCell start = null;
-        PuzzleSquareCell end = null;
+    //private ((int x, int y)[,] distance, int variety) EvaluatePath(ArrayWrapper<PuzzleSquareCell>[] state)
+    //{
+    //    //PuzzleSquareCell start = null;
+    //    //PuzzleSquareCell end = null;
 
-        for(int y = 0; y < state.Length; y++)
-        {
-            for(int x = 0; x < state[y].Count; x++)
-            {
-                if (state[y][x] is StartCell)
-                    start = state[y][x];
-                else if (state[y][x] is EndCell)
-                    end = state[y][x];
+    //    //for(int y = 0; y < state.Length; y++)
+    //    //{
+    //    //    for(int x = 0; x < state[y].Count; x++)
+    //    //    {
+    //    //        if (state[y][x] is StartCell)
+    //    //            start = state[y][x];
+    //    //        else if (state[y][x] is EndCell)
+    //    //            end = state[y][x];
 
-                if (start != null && end != null)
-                    break;
-            }
-        }
+    //    //        if (start != null && end != null)
+    //    //            break;
+    //    //    }
+    //    //}
+    //    int variety = 0;
+    //    for(int y = 0; y < state.Length; y++)
+    //    {
+    //        for(int x = 0; x < state[y].Count; x++)
+    //        {
+    //            if(matrixCells[y][x] != state[y][x])
+    //            {
 
-        bool AreConnected(PuzzleSquareCell previous, PuzzleSquareCell next)
-        {
-            bool[] previousConnections = previous.GetConnections();
-            bool[] nextConnections = next.GetConnections();
+    //            }
+    //        }
+    //    }
 
-            (int y, int x) p = IndexOfState(state, previous);
-            (int y, int x) n = IndexOfState(state, next);
+    //    //bool AreConnected(PuzzleSquareCell previous, PuzzleSquareCell next)
+    //    //{
+    //    //    bool[] previousConnections = previous.GetConnections();
+    //    //    bool[] nextConnections = next.GetConnections();
 
-            (int dy, int dx) = (Mathf.Abs(p.y - n.y), Mathf.Abs(p.x - n.x));
+    //    //    (int y, int x) p = IndexOfState(state, previous);
+    //    //    (int y, int x) n = IndexOfState(state, next);
 
-            if (dx == dy || dx > 1 || dy > 1)
-                return false;
+    //    //    (int dy, int dx) = (Mathf.Abs(p.y - n.y), Mathf.Abs(p.x - n.x));
 
-            if (p.x < n.x)
-                return previousConnections[2] && nextConnections[0];
+    //    //    if (dx == dy || dx > 1 || dy > 1)
+    //    //        return false;
 
-            if (p.x > n.x)
-                return previousConnections[0] && nextConnections[2];
+    //    //    if (p.x < n.x)
+    //    //        return previousConnections[2] && nextConnections[0];
 
-            if (p.y < n.y)
-                return previousConnections[1] && nextConnections[3];
+    //    //    if (p.x > n.x)
+    //    //        return previousConnections[0] && nextConnections[2];
 
-            if (p.y > n.y)
-                return previousConnections[3] && nextConnections[1];
+    //    //    if (p.y < n.y)
+    //    //        return previousConnections[1] && nextConnections[3];
 
-            return false;
-        }
+    //    //    if (p.y > n.y)
+    //    //        return previousConnections[3] && nextConnections[1];
 
-        if (start == null || end == null) return (false, 0, 0);
+    //    //    return false;
+    //    //}
+        
+    //    //if (start == null || end == null) return (false, 0, 0, 0);
 
-        Queue<(PuzzleSquareCell cell, int distance, int pathValue)> queue = new Queue<(PuzzleSquareCell, int, int)>();
-        HashSet<PuzzleSquareCell> visited = new HashSet<PuzzleSquareCell>();
+    //    //Queue<(PuzzleSquareCell cell, int xDist, int yDist, int variety)> queue = new();
+    //    //HashSet<PuzzleSquareCell> visited = new HashSet<PuzzleSquareCell>();
 
-        queue.Enqueue((start, 0, start.value));
-        visited.Add(start);
+    //    //queue.Enqueue((start, 0, start.value));
+    //    //visited.Add(start);
 
-        while(queue.Count > 0)
-        {
-            //Debug.Log("Sigo aqui");
-            var (current, dist, pathValue) = queue.Dequeue();
+    //    //while(queue.Count > 0)
+    //    //{
+    //    //    //Debug.Log("Sigo aqui");
+    //    //    var (current, dist, pathValue) = queue.Dequeue();
 
-            if (current == end) return (true, dist, pathValue);
+    //    //    if (current == end) return (true, dist, pathValue);
 
-            foreach (var neighbor in GetStateNeighbors(state, current))
-            {
-                if(visited.Contains(neighbor)) continue;
+    //    //    foreach (var neighbor in GetStateNeighbors(state, current))
+    //    //    {
+    //    //        if(visited.Contains(neighbor)) continue;
 
-                if (AreConnected(current, neighbor))
-                {
-                    queue.Enqueue((neighbor, dist+1, pathValue + neighbor.value)); 
-                    visited.Add(neighbor);
-                }
-            }
-        }
+    //    //        if (AreConnected(current, neighbor))
+    //    //        {
+    //    //            queue.Enqueue((neighbor, dist + 1, pathValue + neighbor.value)); 
+    //    //            visited.Add(neighbor);
+    //    //        }
+    //    //    }
+    //    //}
 
-        return (false, 0, 0);
-    }
+    //    //return (false, 0, 0);
+    //}
 
     private float FitnessFunction(ArrayWrapper<PuzzleSquareCell>[] subject)
     {
-        var result = EvaluatePath(subject);
-        if(!result.solvable) return -1;
-
-        float lenghtScore = result.lenght;
-        float varietyScore = result.variety;
-
-        float fitness = lenghtScore + varietyScore;
-        Debug.Log("Fitness: " + fitness);
+        float fitness = 0;
+        for(int y = 0; y < subject.Length; y++)
+        {
+            for(int x = 0; x < subject[y].Count; x++)
+            {
+                if (matrixCells[y][x] != subject[y][x]
+                    && (matrixCells[y][x] is not EmptyCell || subject[y][x] is not EmptyCell))
+                {
+                    (int y, int x) coord = IndexOf(subject[y][x]);
+                    (int y, int x) delta = (Mathf.Abs(coord.x - x), Mathf.Abs(coord.y - y));
+                    fitness += delta.y + delta.x;
+                }
+            }
+        }
 
         return fitness;
     }
@@ -603,11 +627,31 @@ public class RoadPuzzle : MonoBehaviour
     private ArrayWrapper<PuzzleSquareCell>[] GenerateNeighbor(ArrayWrapper<PuzzleSquareCell>[] state)
     {
         var newState = CloneMatrix(state);
-        int y = Random.Range(0, height);
-        int x = Random.Range(0, length);
-        PuzzleSquareCell chosen = newState[y][x];
+        List<PuzzleSquareCell> neighbors = new List<PuzzleSquareCell>();
+        PuzzleSquareCell chosen;
 
-        var neighbors = GetStateNeighbors(state, chosen).ToList();
+        bool IsSwappable(PuzzleSquareCell cell)
+        {
+            if (cell is StartCell || cell is EndCell)
+                return false;
+
+            if (chosen is EmptyCell)
+                return cell is not EmptyCell;
+
+            return cell is EmptyCell;
+        }
+
+        do
+        {
+            do
+            {
+                (int y, int x) = (Random.Range(0, height), Random.Range(0, width));
+
+                chosen = newState[y][x];
+            } while (chosen is StartCell || chosen is EndCell);
+
+            neighbors = GetNeighborsFromState(state, chosen).Where(IsSwappable).ToList();
+        } while (neighbors.Count == 0);
         
         if(neighbors.Count > 0)
         {
@@ -626,7 +670,7 @@ public class RoadPuzzle : MonoBehaviour
     {
         for (int y = 0; y < height; y++)
         {
-            for (int x = 0; x < length; x++)
+            for (int x = 0; x < width; x++)
             {
                 if (state[y][x] == cell)
                     return (y, x);
@@ -634,7 +678,7 @@ public class RoadPuzzle : MonoBehaviour
         }
         return (-1, -1);
     }
-    private IEnumerable<PuzzleSquareCell> GetStateNeighbors(ArrayWrapper<PuzzleSquareCell>[] state,
+    private IEnumerable<PuzzleSquareCell> GetNeighborsFromState(ArrayWrapper<PuzzleSquareCell>[] state,
         PuzzleSquareCell cell)
     {
         (int y, int x) = IndexOfState(state, cell);
@@ -642,7 +686,7 @@ public class RoadPuzzle : MonoBehaviour
             yield return state[y][x - 1];
         if (y > 0)
             yield return state[y - 1][x];
-        if (x < length - 1)
+        if (x < width - 1)
             yield return state[y][x + 1];
         if (y < height - 1)
             yield return state[y + 1][x];

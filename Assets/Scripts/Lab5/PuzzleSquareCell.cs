@@ -55,10 +55,6 @@ public class PuzzleSquareCell : MonoBehaviour
     [SerializeField] private bool[] connections = new bool[4];
     public int value;
 
-    public bool IsValid => true;
-    public float Cost => 1;
-    public bool Selected { private set; get; }
-
     // Start is called before the first frame update
     void Start()
     {
@@ -109,4 +105,21 @@ public class PuzzleSquareCell : MonoBehaviour
 
         return isReachable;
     }
+
+    //public static bool operator==(PuzzleSquareCell left, PuzzleSquareCell right)
+    //{
+    //    if(left is null && right is null) return true;
+
+    //    if(left is null || right is null) return false;
+
+    //    for(int i = 0; i < 4; i++)
+    //    {
+    //        if (left.connections[i] != right.connections[i])
+    //            return false;
+    //    }
+
+    //    return true;
+    //}
+
+    //public static bool operator !=(PuzzleSquareCell left, PuzzleSquareCell right) => !(left == right);
 }
