@@ -30,6 +30,10 @@ public interface IEvolutionaryStrategy<TIndividual>
         }
 
         TIndividual[] population = Initialize().ToArray();
+
+        if (population.Length > MaxPopulation)
+            throw new Exception("Initial population is over the max population size of " + MaxPopulation);
+
         population.QuickSort(fitnessComparison);
         int count = 0;
         while (!TerminationCriteria(population) && (maxIteration == -1 || count < maxIteration))
@@ -58,4 +62,13 @@ public interface IEvolutionaryStrategy<TIndividual>
 
     public sealed TIndividual GenerateBestIndividual(int maxIteration = -1)
         => GeneratePopulation(maxIteration).First();
+}
+
+public static class EvolutionaryExtension
+{
+    public static TIndividual[] GeneratePopulation<TIndividual>(this IEvolutionaryStrategy<TIndividual> ies, 
+        int iterations = -1) => ies.GeneratePopulation(iterations);
+
+    public static TIndividual GenerateBestIndividual<TIndividual>(this IEvolutionaryStrategy<TIndividual> ies,
+        int iterations = -1) => ies.GenerateBestIndividual(iterations);
 }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-public class EndCell : PuzzleSquareCell
+public class EndCell : PuzzleCell
 { 
 
 }
