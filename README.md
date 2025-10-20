@@ -2,9 +2,9 @@
 
 Repositorio para el proyecto de Unity 2022.3.21f1 utilizado en el módulo de Generación Procedural de Contenidos.
 
-Dentro del proyecto se encuentra la carpeta de escenas, la escena "Proyecto2Puzzle" corresponde a una unión de 3 tecnicas de generación procedural para generar un puzzle basado en un juego "Roll the Ball".
+Dentro del proyecto se encuentra la carpeta de escenas, la escena "Proyecto2" corresponde a una unión de 3 tecnicas de generación procedural para generar un puzzle basado en un juego "Roll the Ball".
 
-Las tecnicas utilizadas son (μ + λ) Evolution Strategy, Backwards from Goal y Simulated Annealing.
+Las tecnicas utilizadas son (μ + λ) Evolution Strategy, Backwards from Goal y Simulated Annealing. Se utilizó el concepto de Backwards from goal para hacer funcionar todo, se consiguió el mapa solucionado con Evolution Strategy y se desordenó con Simulated Annealing.
 
 Al ejecutar la escena se genera el puzzle y se pueden acceder a controles para cambiar los parametros de las tecnicas Evolution Strategy y Simulated Annealing, además de poder volver a generar el puzzle.
 
