@@ -126,8 +126,6 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
     {
         if (annealing != null)
         {
-            coolingSlider.onValueChanged.AddListener(ReadCoolingRate);
-
             switch (mode)
             {
                 case Mode.EVSEMPERTINE:
@@ -1137,8 +1135,60 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
 
     public void ReadCoolingRate(float value)
     {
-        coolingRate = Mathf.Round(value * 10f) /10f;
+        coolingRate = Mathf.Round(coolingSlider.value*10)/10;
         coolingText.text = coolingRate.ToString("F1");
+    }
+
+    public void ReadHeight(string s)
+    {
+        if (float.TryParse(s, out var value))
+            height = (int)value;
+    }
+
+    public void ReadWidth(string s)
+    {
+        if (float.TryParse(s, out var value))
+            height = (int)value;
+    }
+
+    public void ReadPathLenght(string s)
+    {
+        if (float.TryParse(s, out var value))
+            pathLength = (int)value;
+    }
+
+    public void ReadModeChange(int index)
+    {
+        mode = (Mode)index;
+    }
+
+    public void RebuildButton()
+    {
+        Rebuild();
+
+        if (annealing != null)
+        {
+            switch (mode)
+            {
+                case Mode.EVSEMPERTINE:
+                case Mode.EVOLUTIONARY: LoadFromModel(this.GenerateBestIndividual(maxIterations)); break;
+                case Mode.NORMAL: LoadFromModel(BuildSolutionModel(maxIterations)); break;
+            }
+
+            ArrayWrapper<PuzzleCell>[] matrix = executeAnnealing && mode != Mode.NONE ?
+                SimulateAnnealing(matrixCells, startingTemp, minTemp, coolingRate) : CloneMatrix(matrixCells);
+
+            for (int y = 0; y < height; y++)
+            {
+                for (int x = 0; x < width; x++)
+                {
+                    Destroy(annealing.matrixCells[y][x]);
+                    PuzzleCell clone = Instantiate(matrix[y][x], annealing.transform);
+                    clone.transform.position = (Vector2)annealing.transform.position
+                        + new Vector2(x, y) * emptyPrefab.transform.localScale;
+                }
+            }
+        }
     }
 
 #if UNITY_EDITOR
