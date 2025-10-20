@@ -109,7 +109,7 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
     private float presition = 0.75f;
 
     //Simulated Annealing
-    private float startingTemp = 100;
+    private float startingTemp = 400;
     private float minTemp = 1;
     private float coolingRate = 0.75f;
     [SerializeField] private Slider coolingSlider;
@@ -534,6 +534,8 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
         float currentValue = AnnealingFitnessFunction(currentSolution);
         float temperature = startingTemperature;
 
+        int count = 0;
+
         while (temperature > minTemperature)
         {
             var neighbor = GenerateNeighbor(currentSolution);
@@ -557,7 +559,9 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
             }
             temperature *= coolingRate;
 
-            Debug.Log(temperature + "° enfriando...");
+            count++;
+
+            Debug.Log("Cuenta: "+ count + "--" + "Fitness " + currentValue + " -- " +temperature + "° enfriando...");
         }
         return currentSolution;
     }
