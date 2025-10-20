@@ -109,7 +109,7 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
     private float presition = 0.75f;
 
     //Simulated Annealing
-    private float startingTemp = 400;
+    private float startingTemp = 100;
     private float minTemp = 1;
     private float coolingRate = 0.75f;
     [SerializeField] private Slider coolingSlider;
