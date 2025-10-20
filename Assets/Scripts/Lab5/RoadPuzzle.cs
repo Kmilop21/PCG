@@ -6,7 +6,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 [System.Serializable]
 public struct ArrayWrapper<T> : IList<T>
@@ -82,8 +82,10 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
     [System.Serializable]
     public enum Mode
     {
+        NONE = -1,
         NORMAL = 0,
-        EVOLUTIONARY = 1
+        EVOLUTIONARY = 1,
+        EVSEMPERTINE = 2
     }
 
     [SerializeField] private StartCell startPrefab;
@@ -96,6 +98,9 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
     [SerializeField] private RoadPuzzle annealing;
     [SerializeField] private int pathLength = 10;
 
+
+    [SerializeField] private Mode mode = Mode.EVOLUTIONARY;
+    [SerializeField] private bool executeAnnealing = true;
     //Evolution Strategy
     private int maxPopulation = 25;
     public int MaxPopulation => maxPopulation;
@@ -123,8 +128,15 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
         {
             coolingSlider.onValueChanged.AddListener(ReadCoolingRate);
 
-            LoadFromModel(this.GenerateBestIndividual(maxIterations));
-            ArrayWrapper<PuzzleCell>[] matrix = SimulateAnnealing(matrixCells, startingTemp, minTemp, coolingRate);
+            switch (mode)
+            {
+                case Mode.EVSEMPERTINE:
+                case Mode.EVOLUTIONARY:  LoadFromModel(this.GenerateBestIndividual(maxIterations)); break;
+                case Mode.NORMAL: LoadFromModel(BuildSolutionModel(maxIterations)); break;
+            }
+
+            ArrayWrapper<PuzzleCell>[] matrix = executeAnnealing && mode != Mode.NONE ?
+                SimulateAnnealing(matrixCells, startingTemp, minTemp, coolingRate) : CloneMatrix(matrixCells);
 
             for (int y = 0; y < height; y++)
             {
@@ -1027,6 +1039,9 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
 
         float CalculateBias()
         {
+            if (mode == Mode.EVSEMPERTINE)
+                return 0;
+
             repeated.Remove(0);
 
             if (repeated.Keys.Count <= 1)
