@@ -6,7 +6,6 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static UnityEngine.ParticleSystem;
 
 [System.Serializable]
 public struct ArrayWrapper<T> : IList<T>
@@ -79,6 +78,13 @@ public struct ArrayWrapper<T> : IList<T>
 
 public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,]>
 {
+    [System.Serializable]
+    public enum Mode
+    {
+        NORMAL = 0,
+        EVOLUTIONARY = 1
+    }
+
     [SerializeField] private StartCell startPrefab;
     [SerializeField] private EndCell endPrefab;
     [SerializeField] private PuzzleCell emptyPrefab;
@@ -87,11 +93,9 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
     [SerializeField] private int height = 4;
     [SerializeField, HideInInspector] private ArrayWrapper<PuzzleCell>[] matrixCells;
     [SerializeField] private RoadPuzzle annealing;
-    [System.NonSerialized] private StartCell start;
-    [System.NonSerialized] private EndCell end;
-
     [SerializeField] private int pathLength = 10;
-
+    [SerializeField] private Mode mode = Mode.EVOLUTIONARY;
+    [SerializeField] private bool executeAnnealing = true;
     public int MaxPopulation => 25;
 
     public RoadPuzzle()
@@ -105,6 +109,7 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
     {
         if (annealing != null)
         {
+
             LoadFromModel(this.GenerateBestIndividual(15));
             ArrayWrapper<PuzzleCell>[] matrix = SimulateAnnealing(matrixCells, 100, 1, 0.75f);
 
@@ -121,6 +126,8 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
             }
         }
     }
+
+
 
     // Update is called once per frame
     void Update()
@@ -147,7 +154,6 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
         (matrixCells[x.i][x.j], matrixCells[y.i][y.j]) = (matrixCells[y.i][y.j], matrixCells[x.i][x.j]);
         (second.transform.position, first.transform.position) = (first.transform.position, second.transform.position);
     }
-    
     
     private void LoadFromModel(PuzzleCellRedux[,] board)
     {
