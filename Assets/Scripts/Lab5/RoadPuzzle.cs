@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEditor;
@@ -94,9 +95,20 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
     [SerializeField, HideInInspector] private ArrayWrapper<PuzzleCell>[] matrixCells;
     [SerializeField] private RoadPuzzle annealing;
     [SerializeField] private int pathLength = 10;
-    [SerializeField] private Mode mode = Mode.EVOLUTIONARY;
-    [SerializeField] private bool executeAnnealing = true;
-    public int MaxPopulation => 25;
+
+    //Evolution Strategy
+    private int maxPopulation = 25;
+    public int MaxPopulation => maxPopulation;
+
+    private int maxIterations = 15;
+    private float presition = 0.75f;
+
+    //Simulated Annealing
+    private float startingTemp = 100;
+    private float minTemp = 1;
+    private float coolingRate = 0.75f;
+    [SerializeField] private Slider coolingSlider;
+    [SerializeField] private TextMeshProUGUI coolingText;
 
     public RoadPuzzle()
     {
@@ -109,9 +121,10 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
     {
         if (annealing != null)
         {
+            coolingSlider.onValueChanged.AddListener(ReadCoolingRate);
 
-            LoadFromModel(this.GenerateBestIndividual(15));
-            ArrayWrapper<PuzzleCell>[] matrix = SimulateAnnealing(matrixCells, 100, 1, 0.75f);
+            LoadFromModel(this.GenerateBestIndividual(maxIterations));
+            ArrayWrapper<PuzzleCell>[] matrix = SimulateAnnealing(matrixCells, startingTemp, minTemp, coolingRate);
 
             for (int y = 0; y < height; y++)
             {
@@ -1074,6 +1087,37 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
     {
         return false;
     }
+
+    public void ReadPopulationSize(string s)
+    {
+        if (float.TryParse(s, out var size))
+            maxPopulation = (int)size;
+    }
+
+    public void ReadIterationAmount(string s)
+    {
+        if (float.TryParse(s, out var amount))
+            maxIterations = (int)amount;
+    }
+
+    public void ReadStartingTemp(string s)
+    {
+        if (float.TryParse(s, out var temp))
+            startingTemp = temp;
+    }
+
+    public void ReadMinTemp(string s)
+    {
+        if (float.TryParse(s, out var temp))
+            minTemp = temp;
+    }
+
+    public void ReadCoolingRate(float value)
+    {
+        coolingRate = Mathf.Round(value * 10f) /10f;
+        coolingText.text = coolingRate.ToString("F1");
+    }
+
 #if UNITY_EDITOR
     [CustomEditor(typeof(RoadPuzzle)), CanEditMultipleObjects]
     public class MyEditor : Editor
