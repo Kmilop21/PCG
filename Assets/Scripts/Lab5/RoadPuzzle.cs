@@ -129,21 +129,28 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
             switch (mode)
             {
                 case Mode.EVSEMPERTINE:
-                case Mode.EVOLUTIONARY:  LoadFromModel(this.GenerateBestIndividual(maxIterations)); break;
+                case Mode.EVOLUTIONARY: LoadFromModel(this.GenerateBestIndividual(maxIterations)); break;
                 case Mode.NORMAL: LoadFromModel(BuildSolutionModel(maxIterations)); break;
             }
 
             ArrayWrapper<PuzzleCell>[] matrix = executeAnnealing && mode != Mode.NONE ?
                 SimulateAnnealing(matrixCells, startingTemp, minTemp, coolingRate) : CloneMatrix(matrixCells);
 
+            annealing.Rebuild();
+            //for (int y = 0; y < annealing.matrixCells.Length; y++)
+            //{
+            //    for (int x = 0; x < annealing.matrixCells[y].Count; x++)
+            //        Destroy(annealing.matrixCells[y][x]);
+            //}
+
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
                 {
-                    if(annealing.matrixCells[y][x] is EmptyCell)
-                        Destroy(annealing.matrixCells[y][x]);
-                    PuzzleCell clone = Instantiate(matrix[y][x], annealing.transform);
-                    clone.transform.position = (Vector2)annealing.transform.position
+                    Destroy(annealing.matrixCells[y][x]);
+                    annealing.matrixCells[y][x] = Instantiate(matrix[y][x], annealing.transform);
+                    annealing.matrixCells[y][x].name = matrix[y][x].name;
+                    annealing.matrixCells[y][x].transform.position = (Vector2)annealing.transform.position
                         + new Vector2(x, y) * emptyPrefab.transform.localScale;
                 }
             }
@@ -479,7 +486,10 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
                 if (matrixCells[y][x] == null)
                     continue;
 #if UNITY_EDITOR
-                DestroyImmediate(matrixCells[y][x].gameObject, false);
+                if(Application.isPlaying)
+                    Destroy(matrixCells[y][x].gameObject);
+                else
+                    DestroyImmediate(matrixCells[y][x].gameObject, false);
 #else
                 Destroy(matrixCells[y][x].gameObject);
 #endif
@@ -1170,30 +1180,7 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
     public void RebuildButton()
     {
         Rebuild();
-
-        if (annealing != null)
-        {
-            switch (mode)
-            {
-                case Mode.EVSEMPERTINE:
-                case Mode.EVOLUTIONARY: LoadFromModel(this.GenerateBestIndividual(maxIterations)); break;
-                case Mode.NORMAL: LoadFromModel(BuildSolutionModel(maxIterations)); break;
-            }
-
-            ArrayWrapper<PuzzleCell>[] matrix = executeAnnealing && mode != Mode.NONE ?
-                SimulateAnnealing(matrixCells, startingTemp, minTemp, coolingRate) : CloneMatrix(matrixCells);
-
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    Destroy(annealing.matrixCells[y][x]);
-                    PuzzleCell clone = Instantiate(matrix[y][x], annealing.transform);
-                    clone.transform.position = (Vector2)annealing.transform.position
-                        + new Vector2(x, y) * emptyPrefab.transform.localScale;
-                }
-            }
-        }
+        Start();
     }
 
 #if UNITY_EDITOR
