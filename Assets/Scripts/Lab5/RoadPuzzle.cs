@@ -1137,6 +1137,7 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
     {
         coolingRate = Mathf.Round(coolingSlider.value*10)/10;
         coolingText.text = coolingRate.ToString("F1");
+        coolingRate /= 100;
     }
 
     public void ReadHeight(string s)
@@ -1148,7 +1149,7 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
     public void ReadWidth(string s)
     {
         if (float.TryParse(s, out var value))
-            height = (int)value;
+            width = (int)value;
     }
 
     public void ReadPathLenght(string s)
