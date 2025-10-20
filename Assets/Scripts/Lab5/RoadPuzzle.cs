@@ -973,7 +973,15 @@ public class RoadPuzzle : MonoBehaviour, IEvolutionaryStrategy<PuzzleCellRedux[,
         float lengthScore = result.lenght;
         float varietyScore = result.variety;
 
-        float fitness = lengthScore + varietyScore;
+
+        float lengthCriteria = 0;
+
+        float diffPath = Mathf.Abs(pathLength - lengthScore + 2);
+        
+        if (diffPath != 0)
+            lengthCriteria = -diffPath;
+
+        float fitness = lengthCriteria + varietyScore;
         Debug.Log("Fitness: " + fitness);
 
         return fitness;

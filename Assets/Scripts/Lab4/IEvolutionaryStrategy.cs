@@ -60,8 +60,7 @@ public interface IEvolutionaryStrategy<TIndividual>
         return population;
     }
 
-    public sealed TIndividual GenerateBestIndividual(int maxIteration = -1)
-        => GeneratePopulation(maxIteration).First();
+    public sealed TIndividual GenerateBestIndividual(int maxIteration = -1) => GeneratePopulation(maxIteration).First();
 }
 
 public static class EvolutionaryExtension
